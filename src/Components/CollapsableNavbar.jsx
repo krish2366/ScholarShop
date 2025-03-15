@@ -38,13 +38,13 @@ function CollapsableNavbar() {
           tabIndex={-1}
           aria-labelledby="drawer-navigation-label"
         >
-          <h5
+          <h2
             id="drawer-navigation-label"
             className=" flex gap-5 items-center text-base font-semibold text-[#E0EAF6] uppercase bg-[#0057A1] p-4 "
           >
             <img src={logo} alt="scholar shop" className="h-16" />
-            <h1 className="text-3xl italic font-bold">ScholarShop</h1>
-          </h5>
+            <p className="text-3xl italic font-bold">ScholarShop</p>
+          </h2>
           <button
             type="button"
             data-drawer-hide="drawer-navigation"

@@ -39,7 +39,7 @@ function Navbar() {
       <div className="flex items-center gap-10">
         <img src={bell} alt="notification" />
         <button className="bg-[#ABD2EB] text-white h-11 w-11 rounded-full flex items-center justify-center">
-          <img src={user} alt="user" className="h-7 w-7" />
+          {localStorage.getItem("accessToken") ? <img src={user} alt="user" className="h-7 w-7" /> : <a href="/login">Login</a>}
         </button>
       </div>
     </nav>
