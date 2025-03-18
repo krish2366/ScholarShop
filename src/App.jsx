@@ -6,6 +6,7 @@ import Post from './Pages/Post'
 import Signup from './Pages/Signup'
 import Profile from './Pages/Profile'
 import Item from './Pages/Item';
+import Chat from './Pages/Chat';
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/post" element={<Post />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/chat/:sellerId/:productId" element={<Chat/>} />
         <Route path="/item/:id" element={<Item/>} />
         <Route path="*" element={<div>404 page not found</div>} />
       </Routes>

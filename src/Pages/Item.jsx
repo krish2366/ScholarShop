@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from '../Components/Navbar'
 import user from "../assets/user.svg";
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function Item() {
+
+    const navigate = useNavigate();
 
     const [product, setProduct] = useState({})
 
@@ -12,7 +14,7 @@ function Item() {
         fetch(`http://localhost:5000/item/get-item-details/${id}`)
         .then(res => res.json())
         .then(data => {
-            console.log(data)
+            // console.log(data)
             setProduct(data.data)
         })
         .catch(err => console.log(err))
@@ -21,6 +23,9 @@ function Item() {
 
     },[])
 
+    const handleClick =()=>{
+        navigate(`/chat/${product.userId}/${product.id}`)
+    }
 
   return (
     <section className="bg-[#DCE6EC] min-h-screen">
@@ -50,10 +55,10 @@ function Item() {
                     <div className='h-10 w-10 rounded-full bg-red-300 flex items-center justify-center'>
                         <img src={user} alt="user" className="h-7 w-7" />
                     </div>
-                    <h1 className='text-2xl font-semibold'>{product.User?.email || "User Uncertain"}</h1>
+                    <h1 className='text-2xl font-semibold'>{product.User?.userName || "User Uncertain"}</h1>
                 </div>
                 <div className='flex justify-center items-center'>
-                    <button className='text-xl font-semibold bg-blue-400 rounded-2xl px-4 py-2 mb-5 '>Chat with Seller</button>
+                    <button className='text-xl font-semibold bg-blue-400 rounded-2xl px-4 py-2 mb-5 ' onClick={handleClick}>Chat with Seller</button>
 
                 </div>
             </div>

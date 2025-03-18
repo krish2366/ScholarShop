@@ -13,7 +13,7 @@ function Login() {
 
   const handleClick = async () => {
     const data = {
-      "phoneNumber":phoneNumber,
+      // "phoneNumber":phoneNumber,
       "password":password,
       "email":email
     };
@@ -27,6 +27,7 @@ function Login() {
     const resData = await res.json();
     console.log(resData);
     localStorage.setItem("accessToken",resData.accessToken);
+    localStorage.setItem("userId",resData.user.id);
 
     if(resData.success){
       navigate('/');
@@ -57,13 +58,13 @@ function Login() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <input
+        {/* <input
         className="border-2 border-[#D9D9D9] rounded-full p-2 pl-7 w-5/6 font-bold placeholder-black mb-8"
         type="text"
         placeholder="Phone Number"
         value={phoneNumber}
         onChange={(e) => setPhoneNumber(e.target.value)}
-        />
+        /> */}
         <input
           className="border-2 border-[#D9D9D9] rounded-full p-2 pl-7 w-5/6 font-bold placeholder-black "
           type="password"

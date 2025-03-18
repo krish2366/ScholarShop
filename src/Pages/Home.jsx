@@ -92,8 +92,8 @@ function Home() {
         <div>
           <h3 className="text-center text-[2.5rem] font-medium my-5">Products</h3>
           <div className="grid grid-cols-4 gap-10 p-10">
-            { products.length > 0 ? products.map((product) =>{
-              return  <div id={product.id} className="max-w-sm rounded-lg overflow-hidden shadow-lg bg-gray-200 ">
+            { products.length > 0 ? products.map((product,index) =>{
+              return  <div key={index} className="max-w-sm rounded-lg overflow-hidden shadow-lg bg-gray-200 ">
                         <img className="w-full h-48 object-cover" src={product.imageUrl} alt="Card image" />
                         <div className="p-4">
                           <h5 className="text-lg font-semibold">{product.title}</h5>
