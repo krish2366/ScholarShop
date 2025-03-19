@@ -9,6 +9,7 @@ import Item from './Pages/Item';
 import Chat from './Pages/Chat';
 import AvailableBuyers from './Pages/AvailableBuyers';
 import { useState } from 'react';
+import UpdateItem from './Pages/UpdateItem';
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/post" element={<Post />} />
+        <Route path="/update-item/:id" element={<UpdateItem/>} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/availableBuyers/:itemId" element={<AvailableBuyers setBuyerId={setBuyerId} />} />
         <Route path="/chat/:sellerId/:productId" element={<Chat buyerId={buyerId} />} />

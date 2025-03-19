@@ -1,117 +1,177 @@
 import React, { useState } from "react";
-import logo from "../assets/logo1.svg";
+import { Link, useNavigate } from "react-router-dom";
 import supimg from "../assets/signup.svg";
+import Navbar from "../Components/Navbar"; 
+
 
 function Signup() {
-  const [Name, setName] = useState("");
+
+  const navigate = useNavigate();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [phoneNum, setPhoneNum] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [cnfPassword, setCnfPassword] = useState('');   
+  const [useEmail, setUseEmail] = useState(true);
+  const [error, setError] = useState("");
+  const [isSigningUp, setIsSigningUp] = useState(false);
 
-    const handleClick = async () => {
-        if (password !== cnfPassword) {
-        alert("Passwords do not match");
-        } else {
+    const handleClick = async (e) => {
+      e.preventDefault();
+      setIsSigningUp(true);
+      setError("");
+
+      if (password !== cnfPassword) {
+        setError("Passwords do not match");
+        setIsSigningUp(false);
+        return;
+      } 
         
-        const data = {
-            Name: Name,
-            email: email,
-            phoneNumber: phoneNum,
-            password: password,
-        }
-        const res = await fetch('http://localhost:5000/auth/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
+      const data = {
+        name,
+        ...(useEmail ? { email } : { phoneNumber }),
+        password,
+      }
+
+      try {
+        const res = await fetch("http://localhost:5000/auth/register",{
+          method: "POST",
+          headers:{
+            "Content-Type" : "application/json"
+          },
+          body: JSON.stringify(data),
         })
-        const resData = await res.json()
-        console.log(resData)
-    } }
+
+        const resData = await res.json();
+        console.log(resData);
+
+        if(resData.success){
+          localStorage.setItem("accessToken", resData.accessToken);
+          localStorage.setItem("userId", resData.userId);
+          navigate("/");
+        }
+      } catch (error) {
+        console.log(error)
+        setError("Something went wrong. Please try again.")
+      }finally{
+        setIsSigningUp(false);
+      }
+    }
 
 
 
 
   return (
-    <div className="flex">
-      <section className="w-1/2 bg-[#DCE6EC] h-screen p-20 pb-0">
-        <p className="font-bold text-4xl">Sign Up</p>
-        <p className="text-2xl p-8 pl-0">
-          Already have an account?{" "}
-          <a href="/login" className="text-[#2F46BD] underline">
-            Login here
-          </a>
-        </p>
-        <section>
-          <form className="flex flex-col mt-9">
-            <div className="flex justify-between items-center mb-8">
-              <label className="text-lg font-bold">Name</label>
-              <input
-                className="border-2 border-[#D9D9D9] rounded-full p-2 w-96 text-center"
-                type="text"
-                placeholder="First Name"
-                value={Name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="flex justify-between items-center mb-8">
-              <label className="text-lg font-bold">Email ID</label>
-              <input
-                className="border-2 border-[#D9D9D9] rounded-full p-2 w-96 text-center"
-                type="text"
-                placeholder="Email ID"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="flex justify-between items-center mb-8">
-              <label className="text-lg font-bold">Phone Number</label>
-              <input
-                className="border-2 border-[#D9D9D9] rounded-full p-2 w-96 text-center"
-                type="text"
-                placeholder="Phone Number"
-                value={phoneNum}
-                onChange={(e) => setPhoneNum(e.target.value)}
-              />
-            </div>
-            <div className="flex justify-between items-center mb-8">
-              <label className="text-lg font-bold">Password</label>
-              <input
-                className="border-2 border-[#D9D9D9] rounded-full p-2 w-96 text-center"
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div className="flex justify-between items-center mb-8">
-              <label className="text-lg font-bold">Confirm Password</label>
-              <input
-                className="border-2 border-[#D9D9D9] rounded-full p-2 w-96 text-center"
-                type="password"
-                placeholder="Confirm Password"
-                value={cnfPassword}
-                onChange={(e) => setCnfPassword(e.target.value)}
-              />
-            </div>
-          </form>
-          <div className="flex justify-center">
-            <button className="bg-[#2F46BD] text-white rounded-full w-64 p-2  mt-8" onClick={handleClick}>
-              Sign Up
+    <div className="min-h-screen bg-[#FFF4DC] flex flex-col">
+      <Navbar />
+      <div className="container mx-auto flex flex-col md:flex-row items-center justify-between px-6 py-16 md:py-24">
+
+        <div className="w-full md:w-1/2 flex justify-center">
+          <img
+            src={supimg}
+            alt="signup"
+            className="w-full md:max-w-md lg:max-w-lg object-cover"
+          />
+        </div>
+
+        <div className="w-full md:w-1/2 bg-white p-8 rounded-lg shadow-lg">
+          <h2 className="text-3xl font-bold text-[#F47C26] text-center">
+            Sign Up for ScholarShop
+          </h2>
+
+          <div className="flex justify-center mt-4">
+            <button
+              className={`px-4 py-2 mx-2 rounded-md ${
+                useEmail ? "bg-[#F47C26] text-white" : "bg-gray-200 text-[#333333]"
+              }`}
+              onClick={() => setUseEmail(true)}
+            >
+              Email Signup
+            </button>
+            <button
+              className={`px-4 py-2 mx-2 rounded-md ${
+                !useEmail ? "bg-[#F47C26] text-white" : "bg-gray-200 text-[#333333]"
+              }`}
+              onClick={() => setUseEmail(false)}
+            >
+              Phone Signup
             </button>
           </div>
-        </section>
-      </section>
-      <section className="bg-[#FFFFFF] w-1/2 h-screen p-20 pt-12 pr-0 pb-0 shadow-2xl">
-        <img src={logo} alt="scholar shop" className="h-32" />
-        <h2 className="font-bold italic text-6xl mb-[4.5rem]">ScholarShop</h2>
-        <p className="text-3xl font-light italic">
-          Campus Deals just a click away!
-        </p>
-        <img src={supimg} alt="signup" className="h-96 mx-7" />
-      </section>
+
+          <form className="mt-6" onSubmit={handleClick}>
+
+            <input
+              className="w-full px-4 py-2 border rounded-lg mb-4 font-bold placeholder-gray-500"
+              type="text"
+              placeholder="Your Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+
+            {useEmail ? (
+              <input
+                className="w-full px-4 py-2 border rounded-lg mb-4 font-bold placeholder-gray-500"
+                type="email"
+                placeholder="Your Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            ) : (
+              <input
+                className="w-full px-4 py-2 border rounded-lg mb-4 font-bold placeholder-gray-500"
+                type="tel"
+                placeholder="Phone Number"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                required
+              />
+            )}
+
+            <input
+              className="w-full px-4 py-2 border rounded-lg mb-4 font-bold placeholder-gray-500"
+              type="password"
+              placeholder="Your Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+
+            <input
+              className="w-full px-4 py-2 border rounded-lg mb-4 font-bold placeholder-gray-500"
+              type="password"
+              placeholder="Confirm Password"
+              value={cnfPassword}
+              onChange={(e) => setCnfPassword(e.target.value)}
+              required
+            />
+
+            {error && (
+              <p className="text-red-500 text-sm text-center mb-4">{error}</p>
+            )}
+
+            <button
+              type="submit"
+              className="w-full bg-[#F47C26] text-white py-2 rounded-lg hover:bg-orange-600 transition disabled:opacity-50"
+              disabled={isSigningUp}
+            >
+              {isSigningUp ? "Signing Up..." : "Sign Up"}
+            </button>
+
+          </form>
+
+          {/* Login Link */}
+          <div className="mt-4 text-center">
+            <p className="text-[#333333]">
+              Already have an account?{" "}
+              <Link to="/login" className="text-[#F47C26] underline">
+                Login here
+              </Link>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

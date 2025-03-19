@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import logo from "../assets/logo1.svg";
+import Navbar from "../Components/Navbar";
 import lginimg from "../assets/login.svg";
 import google from "../assets/google_logo.svg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+
 function Login() {
 
   const navigate = useNavigate();
@@ -10,89 +11,137 @@ function Login() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [useEmail, setUseEmail] = useState(true);
+  const [error, setError] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  const handleClick = async () => {
+  const handleClick = async (e) => {
+    e.preventDefault();
+    setIsLoggingIn(true);
+    setError("");
+
     const data = {
-      // "phoneNumber":phoneNumber,
-      "password":password,
-      "email":email
+      password,
+      ...(useEmail ? { email } : { phoneNumber })
     };
-    const res = await fetch("http://localhost:5000/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const resData = await res.json();
-    console.log(resData);
-    localStorage.setItem("accessToken",resData.accessToken);
-    localStorage.setItem("userId",resData.user.id);
 
-    if(resData.success){
-      navigate('/');
+    try {
+      const res = await fetch("http://localhost:5000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      
+      const resData = await res.json();
+      console.log(resData);
+
+      if(resData.success){
+        localStorage.setItem("accessToken",resData.accessToken);
+        localStorage.setItem("userId",resData.user.id);
+        navigate("/");
+      }else{
+        setError(resData.message || "Invalid credentials");
+      }
+
+    } catch (error) {
+      console.log(error);
+      setError("Something went wrong. Please try again.");
+    }finally{
+      setIsLoggingIn(false);
     }
-  }
+  };
 
   return (
-    <div className="flex">
-      <section className="w-2/3 bg-[#DCE6EC] h-screen p-28 pt-14 pb-0">
-        <div className="flex items-center gap-10 mb-12">
-          <h1 className="font-bold text-3xl italic">ScholarShop</h1>
-          <img src={logo} alt="scholar shop" className="h-28" />
+    <div className="min-h-screen bg-[#FFF4DC] flex flex-col">
+      <Navbar/>
+      <div className="container mx-auto flex flex-col md:flex-row items-center justify-between px-6 py-16 md:py-24">
+        <div className="w-full md:w-1/2 flex justify-center">
+          <img
+            src={lginimg}
+            alt="login"
+            className="w-full md:max-w-md lg:max-w-lg object-cover"
+          />
         </div>
-        <button className="bg-[#fff] font-semibold rounded-full w-5/6 p-2 mb-5 mt-8  flex items-center justify-center gap-6">
-          <img src={google} alt="google" className="h-8" />
-          <span className="font-bold">Login with Google</span>
-        </button>
-        <div className="flex items-center p-7 pr-40 pt-0">
-          <div className="flex-grow border-t-2 border-gray-400 "></div>
-          <span className="mx-6 text-gray-500">OR LOGIN WITH EMAIL</span>
-          <div className="flex-grow border-t-2 border-gray-400"></div>
-        </div>
-
-        <input
-          className="border-2 border-[#D9D9D9] rounded-full p-2 pl-7 w-5/6 font-bold placeholder-black mb-8"
-          type="text"
-          placeholder="Your Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        {/* <input
-        className="border-2 border-[#D9D9D9] rounded-full p-2 pl-7 w-5/6 font-bold placeholder-black mb-8"
-        type="text"
-        placeholder="Phone Number"
-        value={phoneNumber}
-        onChange={(e) => setPhoneNumber(e.target.value)}
-        /> */}
-        <input
-          className="border-2 border-[#D9D9D9] rounded-full p-2 pl-7 w-5/6 font-bold placeholder-black "
-          type="password"
-          placeholder="Your Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <div className="p-3">
-          <a href="#" className="font-normal ">
-            Forgot Password?
-          </a>
-          <p className="mt-3">
-            Don't have an account?{" "}
-            <a href="/signup" className="text-[#2F46BD] underline">
-              Sign Up
+        <div className="w-full md:w-1/2 bg-white p-8 rounded-lg shadow-lg">
+          <h2 className="text-3xl font-bold text-[#F47C26] text-center">
+            Login to Your Account
+          </h2>
+          <button className="w-full bg-white font-semibold rounded-lg p-2 mt-4 flex items-center justify-center gap-4 shadow-md">
+            <img src={google} alt="google" className="h-6" />
+            <span className="text-[#333333]">Login with Google</span>
+          </button>
+          <div className="flex justify-center mt-4">
+            <button
+              className={`px-4 py-2 mx-2 rounded-md ${
+                useEmail ? "bg-[#F47C26] text-white" : "bg-gray-200 text-[#333333]"
+              }`}
+              onClick={() => setUseEmail(true)}
+            >
+              Email Login
+            </button>
+            <button
+              className={`px-4 py-2 mx-2 rounded-md ${
+                !useEmail ? "bg-[#F47C26] text-white" : "bg-gray-200 text-[#333333]"
+              }`}
+              onClick={() => setUseEmail(false)}
+            >
+              Phone Login
+            </button>
+          </div>
+          <form className="mt-6" onSubmit={handleClick}>
+            {useEmail ? (
+              <input
+                className="w-full px-4 py-2 border rounded-lg mb-4 font-bold placeholder-gray-500"
+                type="email"
+                placeholder="Your Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            ) : (
+              <input
+                className="w-full px-4 py-2 border rounded-lg mb-4 font-bold placeholder-gray-500"
+                type="tel"
+                placeholder="Phone Number"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                required
+              />
+            )}
+            <input
+              className="w-full px-4 py-2 border rounded-lg mb-4 font-bold placeholder-gray-500"
+              type="password"
+              placeholder="Your Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            {error && (
+              <p className="text-red-500 text-sm text-center mb-4">{error}</p>
+            )}
+            <button
+              type="submit"
+              className="w-full bg-[#F47C26] text-white py-2 rounded-lg hover:bg-orange-600 transition disabled:opacity-50"
+              disabled={isLoggingIn}
+            >
+              {isLoggingIn ? "Logging in..." : "Login"}
+            </button>
+          </form>
+          <div className="mt-4 text-center">
+            <a href="#" className="text-[#333333] hover:underline">
+              Forgot Password?
             </a>
-          </p>
+            <p className="mt-2 text-[#333333]">
+              Don't have an account?{" "}
+              <Link to="/signup" className="text-[#F47C26] underline">
+                Sign Up
+              </Link>
+            </p>
+          </div>
         </div>
-
-        <button className="bg-[#2F46BD] text-2xl text-white rounded-full w-5/6 p-2 mt-2" onClick={handleClick}>
-          Login
-        </button>
-      </section>
-      <section className="w-1/3 bg-[#FEF3DC] flex flex-col items-center justify-center h-screen">
-        <p className="text-2xl font-semibold">Welcome back!</p>
-        <img src={lginimg} alt="login" className="h-96" />
-      </section>
+      </div>
     </div>
   );
 }
