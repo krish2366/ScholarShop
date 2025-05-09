@@ -74,26 +74,6 @@ function CollapsableNavbar() {
                   href="#"
                   className="flex items-center p-2 text-white rounded-lg  hover:bg-orange-400  "
                 >
-                  <img src={cart} alt="cart" className="h-6 w-6"/>
-                  <span className="ms-3">My Cart</span>
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center p-2 text-white rounded-lg  hover:bg-orange-400  "
-                >
-                  <img src={categories} alt="listing" className="h-6 w-6"/>
-                  <span className="ms-3">My Listings</span>
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center p-2 text-white rounded-lg  hover:bg-orange-400  "
-                >
                   <img src={abtus} alt="aboutus" className="h-6 w-6"/>
                   <span className="ms-3">About Us</span>
                 </a>
@@ -110,13 +90,13 @@ function CollapsableNavbar() {
               </li>
 
               <li>
-                <a
-                  href="#"
+                <button
+                  onClick={() => localStorage.clear()}
                   className="flex items-center p-2 text-white rounded-lg  hover:bg-orange-400  "
                 >
                   <img src={logout} alt="logout" className="h-6 w-6"/>
                   <span className="ms-3">Logout</span>
-                </a>
+                </button>
               </li>
                  
             </ul>

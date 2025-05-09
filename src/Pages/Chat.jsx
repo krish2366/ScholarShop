@@ -90,7 +90,7 @@ function Chat({buyerId}) {
     if (!socket) return <h1 className="text-center text-xl font-bold">Connecting...</h1>;
 
     return (
-        <section className="bg-gray-200 h-screen">
+        <section className="bg-[#FFF4DC] h-screen">
             <Navbar />
             <section>
                 <h1 className="text-center text-3xl font-bold m-6">Chat Section</h1>

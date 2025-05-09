@@ -44,18 +44,20 @@ function Navbar() {
 
       <div className="flex items-center gap-6">
         <img src={bell} alt="notification" className="h-6 w-6" />
-        <button className="bg-[#FFF4DC] text-[#333333] h-10 w-10 rounded-full flex items-center justify-center">
           {localStorage.getItem("accessToken") ? (
-            <img src={user} alt="user" className="h-6 w-6" />
+            <Link 
+              to="/profile"
+              className="bg-[#FFF4DC] text-[#333333] h-10 w-10 rounded-full flex items-center justify-center">
+              <img src={user} alt="user" className="h-6 w-6" />
+            </Link>
           ) : (
             <Link
               to="/login"
-              className="text-gray-700 hover:text-orange-500 text-sm"
+              className="text-gray-800 hover:text-white text-lg font-semibold  px-3 py-1  bg-orange-200 rounded-xl"
             >
               Login
             </Link>
           )}
-        </button>
       </div>
       
     </nav>
