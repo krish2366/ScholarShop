@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import supimg from "../assets/signup.svg";
 import Navbar from "../Components/Navbar"; 
@@ -28,7 +28,7 @@ function Signup() {
       } 
         
       const data = {
-        name,
+        userName:name ,
         ...(useEmail ? { email } : { phoneNumber }),
         password,
       }
