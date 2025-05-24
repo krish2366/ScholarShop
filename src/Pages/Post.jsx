@@ -4,13 +4,12 @@ import camera from "../assets/camera.svg";
 import Navbar from "../Components/Navbar";
 
 const Post = () => {
-
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
-  const [photos, setPhotos] = useState([]); 
+  const [photos, setPhotos] = useState([]); // State variable name remains 'photos'
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -21,7 +20,7 @@ const Post = () => {
       return;
     }
     setPhotos((prev) => [...prev, ...files]);
-    setError(""); 
+    setError("");
   };
 
   const handleSubmit = async (e) => {
@@ -30,6 +29,7 @@ const Post = () => {
     setError("");
 
     const token = localStorage.getItem("accessToken");
+    console.log("Retrieved token:", token);
     if (!token) {
       setError("Please log in to add an item.");
       setIsSubmitting(false);
@@ -47,32 +47,50 @@ const Post = () => {
     formData.append("description", description);
     formData.append("price", parseFloat(price));
     formData.append("category", category);
-    photos.forEach((photo) => formData.append("photos", photo)); // Multiple files under 'photos'
+    photos.forEach((photo, index) => {
+      console.log(`Appending image ${index}:`, photo.name, photo.type, photo.size);
+      formData.append("images", photo); // Changed field name to "images"
+    });
+
+    console.log("FormData entries:");
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
 
     try {
+      const headers = {
+        Authorization: `Bearer ${token.trim()}`,
+      };
+      console.log("Request headers:", headers);
+
       const res = await fetch("http://localhost:5000/item/add-item", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          // Note: 'Content-Type' is omitted as FormData sets it automatically with boundary
-        },
+        headers,
         body: formData,
       });
 
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await res.text();
+        console.error("Non-JSON response:", text);
+        throw new Error(`Expected JSON, but received: ${text.slice(0, 100)}...`);
+      }
+
       const resData = await res.json();
+      console.log("Add item response:", resData);
+
       if (res.ok) {
-        navigate("/"); // Redirect to home on success
+        navigate("/");
       } else {
         setError(resData.message || "Failed to add item.");
       }
     } catch (err) {
       console.error("Add item error:", err);
-      setError("Something went wrong. Please try again.");
+      setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
-
 
   return (
     <div className="min-h-screen bg-[#FFF4DC] flex flex-col">
