@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../Components/Navbar";
+import essentials from "../assets/essentials.webp";
+import pyqs from "../assets/pyqs.webp";
+import Instruments from "../assets/instrument.jpg";
+import books from "../assets/books.jpg";
+import herosection from "../assets/herosection.jpg";
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -72,8 +77,8 @@ function Home() {
       <Navbar />
       <section className="min-h-screen bg-[#FFF4DC] flex flex-col">
         {/* Hero Section */}
-        <div className="container mx-auto px-10 pt-24 pb-10 flex flex-col md:flex-row items-center justify-between">
-          <div className="w-full md:w-3/5 bg-white p-10 rounded-xl rounded-e-none shadow-lg">
+        <div className="container mx-auto px-10 py-24 pb-10 flex flex-col md:flex-row items-center justify-between">
+          <div className="w-full md:w-3/5  bg-white p-10 rounded-xl rounded-e-none shadow-lg">
             <h1 className="text-4xl font-semibold text-[#F47C26] text-center mb-6">
               Turn your stuff into savings!
             </h1>
@@ -98,7 +103,7 @@ function Home() {
             </div>
           </div>
           <div className="w-full md:w-2/5 mt-6 md:mt-0">
-            <div className="bg-gray-200 h-64 rounded-xl rounded-s-none shadow-lg" />
+            <img src={herosection} className="bg-gray-200 w-full h-64 rounded-xl rounded-s-none shadow-lg" />
           </div>
         </div>
 
@@ -112,25 +117,25 @@ function Home() {
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
             <div className="p-4">
-              <div className="w-[100%] h-56 bg-[#D9D9D9] rounded-xl rounded-b-none" />
+              <img src={books} className="w-[100%] h-56 bg-[#D9D9D9] rounded-xl rounded-b-none" />
               <h1 className="text-center text-[1.5rem] font-semibold my-3">
                 Books
               </h1>
             </div>
             <div className="p-4">
-              <div className="w-[100%] h-56 bg-[#D9D9D9] rounded-xl rounded-b-none" />
+              <img src={pyqs} className="w-[100%] h-56 bg-[#D9D9D9] rounded-xl rounded-b-none" />
               <h1 className="text-center text-[1.5rem] font-semibold my-3">
                 PYQs
               </h1>
             </div>
             <div className="p-4">
-              <div className="w-[100%] h-56 bg-[#D9D9D9] rounded-xl rounded-b-none" />
+              <img src={Instruments} className="w-[100%] h-56 bg-[#D9D9D9] rounded-xl rounded-b-none" />
               <h1 className="text-center text-[1.5rem] font-semibold my-3">
                 Instruments
               </h1>
             </div>
             <div className="p-4">
-              <div className="w-[100%] h-56 bg-[#D9D9D9] rounded-xl rounded-b-none" />
+              <img src={essentials} className="w-[100%] h-56 bg-[#D9D9D9] rounded-xl rounded-b-none" />
               <h1 className="text-center text-[1.5rem] font-semibold my-3">
                 Essentials
               </h1>
