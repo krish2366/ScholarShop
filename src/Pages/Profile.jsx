@@ -23,8 +23,8 @@ const Profile = () => {
         })
 
         const resData = await res.json();
-        // console.log(resData)
-        if(resData.sucess){
+        console.log(resData)
+        if(resData.success){
           console.log(resData.data)
           setUser(resData.data)
 
@@ -40,6 +40,53 @@ const Profile = () => {
   }, [])
   
   console.log(user)
+
+  const parseImageUrl = (imageUrl) => {
+    if (!imageUrl) {
+      console.warn("imageUrl is null or undefined");
+      return [];
+    }
+
+    const urlString = Array.isArray(imageUrl) && imageUrl.length > 0 ? imageUrl[0] : imageUrl;
+
+    if (typeof urlString === "string") {
+      try {
+        let cleanedUrlString = urlString
+          .replace(/^"\s*{/, "[") 
+          .replace(/}\s*"$/, "]") 
+          .replace(/\\"/g, '"') 
+          .trim();
+
+        const parsed = JSON.parse(cleanedUrlString);
+        console.log("Parsed URLs:", parsed);
+        return Array.isArray(parsed) ? parsed : [parsed];
+      } catch (e) {
+        console.warn("JSON parse failed for:", urlString, e.message);
+        const urlMatches = urlString.match(/https?:\/\/[^\s"',\]]+/g);
+        if (urlMatches && urlMatches.length > 0) {
+          console.log("Extracted URLs with regex:", urlMatches);
+          return urlMatches;
+        }
+        console.log("Treating as single URL:", urlString);
+        return [urlString];
+      }
+    }
+
+    if (Array.isArray(urlString)) {
+      console.log("imageUrl is already an array:", urlString);
+      return urlString;
+    }
+
+    console.warn("imageUrl is not a string or array:", urlString);
+    return [urlString]; 
+  };
+
+  const getFirstImageUrl = (imageUrl) => {
+    const parsedUrls = parseImageUrl(imageUrl);
+    const firstUrl = parsedUrls.length > 0 ? parsedUrls[0] : "";
+    console.log("First image URL:", firstUrl);
+    return firstUrl;
+  };
 
 
 
@@ -84,7 +131,7 @@ const Profile = () => {
             <p className="font-bold mt-8 text-xl">@{user?.profile?.userName}</p>
           </div>
 
-          <section className="grid grid-cols-3 gap-10 p-5">
+          <section className="grid grid-cols-2 gap-10 p-5">
             {user?.items?.length > 0 ? (
               user.items.map((product) => (
                 <div
@@ -93,8 +140,13 @@ const Profile = () => {
                 >
                   <img
                     className="w-full h-48 object-cover"
-                    src={product.imageUrl}
+                    src={getFirstImageUrl(product.imageUrl)}
                     alt={product.title}
+                    onError={(e) => {
+                      console.error("Image load failed for:", product.title, getFirstImageUrl(product.imageUrl));
+                      e.target.src =
+                        "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==";
+                    }}
                   />
                   <div className="p-4">
                     <h5 className="text-lg font-semibold text-[#333333]">

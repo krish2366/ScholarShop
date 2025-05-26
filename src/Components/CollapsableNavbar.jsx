@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import menu from "../assets/menu.svg";
 import logo from "../assets/logo1.svg";
 import home from "../assets/Right.svg";
@@ -7,104 +7,73 @@ import cart from "../assets/cart.svg";
 import categories from "../assets/category.svg";
 import abtus from "../assets/users.svg";
 import feedback from "../assets/write.svg";
-import logout from "../assets/logout.svg";  
+import logout from "../assets/logout.svg";
 
 function CollapsableNavbar() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleDrawer = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    setIsOpen(false);
+    window.location.href = "/";
+  };
+
   return (
     <>
-      <div>
-        {/* drawer init and show */}
-        <div className="text-center">
-          <button
-            className="text-white font-medium rounded-lg text-sm px-5 py-2.5 "
-            type="button"
-            data-drawer-target="drawer-navigation"
-            data-drawer-show="drawer-navigation"
-            aria-controls="drawer-navigation"
-          >
-            <img
-              src={menu}
-              alt="menu"
-              data-drawer-target="drawer-navigation"
-              data-drawer-show="drawer-navigation"
-              aria-controls="drawer-navigation"
-            />
-          </button>
+      <div className="text-center p-4">
+        <button onClick={toggleDrawer} className="text-white">
+          <img src={menu} alt="menu" />
+        </button>
+      </div>
+
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-30 z-30"
+          onClick={toggleDrawer}
+        ></div>
+      )}
+
+      <div
+        className={`fixed top-0 left-0 z-40 h-full w-[27rem] bg-orange-300 transform transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex gap-5 items-center text-white uppercase bg-orange-400 p-4">
+          <img src={logo} alt="scholar shop" className="h-16" />
+          <p className="text-3xl font-bold">ScholarShop</p>
         </div>
 
-        {/* drawer component */}
-        <div
-          id="drawer-navigation"
-          className="fixed top-0 left-0 z-40 h-screen  overflow-y-auto transition-transform -translate-x-full  w-[27rem] bg-orange-300"
-          tabIndex={-1}
-          aria-labelledby="drawer-navigation-label"
-        >
-          <h2
-            id="drawer-navigation-label"
-            className=" flex gap-5 items-center text-base font-semibold text-white uppercase bg-orange-400 p-4 "
+        <div className="py-4 px-5 overflow-y-auto font-medium space-y-2">
+
+          <NavItem icon={home} label="Home" />
+          <NavItem icon={user} label="My Profile" />
+          <NavItem icon={abtus} label="About Us" />
+          <NavItem icon={feedback} label="Feedback" />
+          <button
+            onClick={handleLogout}
+            className="flex items-center p-2 text-white rounded-lg hover:bg-orange-400 w-full"
           >
-            <img src={logo} alt="scholar shop" className="h-16" />
-            <p className="text-3xl font-bold">ScholarShop</p>
-          </h2>
-
-          <div className="py-4 overflow-y-auto">
-            <ul className="space-y-2 px-5 font-medium">
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center p-2 text-white rounded-lg  hover:bg-orange-400  "
-                >
-                  <img src={home} alt="home" className="h-6 w-6"/>
-                  <span className="ms-3">Home</span>
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center p-2 text-white rounded-lg  hover:bg-orange-400  "
-                >
-                  <img src={user} alt="user" className="h-6 w-6"/>
-                  <span className="ms-3">My Profile</span>
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center p-2 text-white rounded-lg  hover:bg-orange-400  "
-                >
-                  <img src={abtus} alt="aboutus" className="h-6 w-6"/>
-                  <span className="ms-3">About Us</span>
-                </a>
-              </li>
-              
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center p-2 text-white rounded-lg  hover:bg-orange-400  "
-                >
-                  <img src={feedback} alt="feedback" className="h-6 w-6"/>
-                  <span className="ms-3">Feedback</span>
-                </a>
-              </li>
-
-              <li>
-                <button
-                  onClick={() => localStorage.clear()}
-                  className="flex items-center p-2 text-white rounded-lg  hover:bg-orange-400  "
-                >
-                  <img src={logout} alt="logout" className="h-6 w-6"/>
-                  <span className="ms-3">Logout</span>
-                </button>
-              </li>
-                 
-            </ul>
-          </div>
+            <img src={logout} alt="logout" className="h-6 w-6" />
+            <span className="ms-3">Logout</span>
+          </button>
         </div>
       </div>
     </>
   );
 }
+
+const NavItem = ({ icon, label }) => (
+  <a
+    href="#"
+    className="flex items-center p-2 text-white rounded-lg hover:bg-orange-400"
+  >
+    <img src={icon} alt={label} className="h-6 w-6" />
+    <span className="ms-3">{label}</span>
+  </a>
+);
 
 export default CollapsableNavbar;
