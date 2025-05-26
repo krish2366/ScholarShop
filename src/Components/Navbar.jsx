@@ -30,16 +30,6 @@ function Navbar() {
         >
           Home
         </Link>
-        {/* <div className="relative">
-          <input
-            type="text"
-            placeholder="Search for products"
-            className="border-2 rounded-full bg-[#FFF4DC] p-1 pl-4 pr-8 w-64 outline-none text-[#333333] placeholder-[#333333]"
-          />
-          <div className="absolute inset-y-0 right-2 flex items-center">
-            <img src={searchIcon} alt="Search Icon" className="h-5 w-5" />
-          </div>
-        </div> */}
       </div>
 
       <div className="flex items-center gap-6">
