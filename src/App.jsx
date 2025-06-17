@@ -10,6 +10,7 @@ import Chat from './Pages/Chat';
 import AvailableBuyers from './Pages/AvailableBuyers';
 import { useState } from 'react';
 import UpdateItem from './Pages/UpdateItem';
+import CategoryProductsPage from './Pages/Category';
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
         <Route path="/availableBuyers/:itemId" element={<AvailableBuyers setBuyerId={setBuyerId} />} />
         <Route path="/chat/:sellerId/:productId" element={<Chat buyerId={buyerId} />} />
         <Route path="/item/:id" element={<Item/>} />
+        <Route path="/category/:category" element={<CategoryProductsPage/>} />
         <Route path="*" element={<div>404 page not found</div>} />
       </Routes>
     </BrowserRouter>

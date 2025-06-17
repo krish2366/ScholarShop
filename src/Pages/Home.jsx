@@ -87,7 +87,7 @@ function Home() {
             </h2>
             <div className="flex justify-center gap-4">
               <a
-                href="#categories"
+                href="#products"
                 className="bg-[#F47C26] text-white px-8 py-3 rounded-full font-semibold hover:bg-orange-600 transition"
               >
                 Deal Now!
@@ -110,36 +110,35 @@ function Home() {
         {/* Categories */}
         <div className="container mx-auto px-6 py-10">
           <h1
-            id="categories"
             className="text-4xl font-medium text-[#333333] text-center mb-10"
           >
             Popular Categories
           </h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="p-4">
+          <div id="products" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+            <Link to="/category/Books" className="p-4">
               <img src={books} className="w-[100%] h-56 bg-[#D9D9D9] rounded-xl rounded-b-none" />
               <h1 className="text-center text-[1.5rem] font-semibold my-3">
                 Books
               </h1>
-            </div>
-            <div className="p-4">
+            </Link>
+            <Link to="/category/PYQs" className="p-4">
               <img src={pyqs} className="w-[100%] h-56 bg-[#D9D9D9] rounded-xl rounded-b-none" />
               <h1 className="text-center text-[1.5rem] font-semibold my-3">
                 PYQs
               </h1>
-            </div>
-            <div className="p-4">
+            </Link>
+            <Link to="/category/Instruments" className="p-4">
               <img src={Instruments} className="w-[100%] h-56 bg-[#D9D9D9] rounded-xl rounded-b-none" />
               <h1 className="text-center text-[1.5rem] font-semibold my-3">
                 Instruments
               </h1>
-            </div>
-            <div className="p-4">
+            </Link>
+            <Link to="/category/Essentials" className="p-4">
               <img src={essentials} className="w-[100%] h-56 bg-[#D9D9D9] rounded-xl rounded-b-none" />
               <h1 className="text-center text-[1.5rem] font-semibold my-3">
                 Essentials
               </h1>
-            </div>
+            </Link>
           </div>
         </div>
 

@@ -1,13 +1,12 @@
-import React, { useState } from "react";
-import menu from "../assets/menu.svg";
+import { useState } from "react";
 import logo from "../assets/logo1.svg";
 import home from "../assets/Right.svg";
 import user from "../assets/user.svg";
-import cart from "../assets/cart.svg";
-import categories from "../assets/category.svg";
 import abtus from "../assets/users.svg";
 import feedback from "../assets/write.svg";
 import logout from "../assets/logout.svg";
+import { Bars3Icon } from "@heroicons/react/24/outline";
+import { Link } from "react-router-dom";
 
 function CollapsableNavbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,10 +22,10 @@ function CollapsableNavbar() {
   };
 
   return (
-    <>
-      <div className="text-center p-4">
+    <nav className="">
+      <div className="text-center">
         <button onClick={toggleDrawer} className="text-white">
-          <img src={menu} alt="menu" />
+          <Bars3Icon className="h-10 w-8 text-white" />
         </button>
       </div>
 
@@ -49,10 +48,10 @@ function CollapsableNavbar() {
 
         <div className="py-4 px-5 overflow-y-auto font-medium space-y-2">
 
-          <NavItem icon={home} label="Home" />
-          <NavItem icon={user} label="My Profile" />
-          <NavItem icon={abtus} label="About Us" />
-          <NavItem icon={feedback} label="Feedback" />
+          <NavItem icon={home} label="Home" href="/" />
+          <NavItem icon={user} label="My Profile" href="/profile"/>
+          <NavItem icon={abtus} label="About Us" href="/about"/>
+          <NavItem icon={feedback} label="Feedback" href="/feedback"/>
           <button
             onClick={handleLogout}
             className="flex items-center p-2 text-white rounded-lg hover:bg-orange-400 w-full"
@@ -62,18 +61,18 @@ function CollapsableNavbar() {
           </button>
         </div>
       </div>
-    </>
+    </nav>
   );
 }
 
-const NavItem = ({ icon, label }) => (
-  <a
-    href="#"
+const NavItem = ({ icon, label, href }) => (
+  <Link
+    to={href}
     className="flex items-center p-2 text-white rounded-lg hover:bg-orange-400"
   >
     <img src={icon} alt={label} className="h-6 w-6" />
     <span className="ms-3">{label}</span>
-  </a>
+  </Link>
 );
 
 export default CollapsableNavbar;
