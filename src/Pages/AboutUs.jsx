@@ -1,18 +1,6 @@
-import React from "react";
 import { Mail, Phone, MapPin, Users, Target, Heart } from "lucide-react";
-
-// Placeholder Navbar component for demo
-const Navbar = () => (
-  <nav className="bg-white shadow-md p-4">
-    <div className="container mx-auto flex justify-between items-center">
-      <h1 className="text-2xl font-bold text-[#F47C26]">ScholarShop</h1>
-      <div className="flex gap-4">
-        <a href="/" className="text-[#333333] hover:text-[#F47C26]">Home</a>
-        <a href="/about" className="text-[#F47C26] font-semibold">About</a>
-      </div>
-    </div>
-  </nav>
-);
+import Navbar from "../Components/Navbar";
+import Footer from "../Components/Footer";
 
 function AboutUs() {
   const teamMembers = [
@@ -41,10 +29,9 @@ function AboutUs() {
 
   return (
     <>
-      <Navbar />
+      <Navbar/>
       <section className="min-h-screen bg-[#FFF4DC]">
         
-        {/* Hero Section */}
         <div className="container mx-auto px-6 py-16">
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold text-[#F47C26] mb-6">About ScholarShop</h1>
@@ -54,7 +41,6 @@ function AboutUs() {
           </div>
         </div>
 
-        {/* Our Story */}
         <div className="container mx-auto px-6 pb-16">
           <div className="bg-white rounded-xl shadow-lg p-8 md:p-12 mb-16">
             <div className="flex flex-col md:flex-row items-center gap-8">
@@ -81,7 +67,6 @@ function AboutUs() {
           </div>
         </div>
 
-        {/* Values */}
         <div className="container mx-auto px-6 pb-16">
           <h2 className="text-4xl font-medium text-[#333333] text-center mb-12">Our Values</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -115,7 +100,6 @@ function AboutUs() {
           </div>
         </div>
 
-        {/* Team Section */}
         <div className="container mx-auto px-6 pb-16">
           <h2 className="text-4xl font-medium text-[#333333] text-center mb-12">Meet Our Team</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -143,7 +127,6 @@ function AboutUs() {
           </div>
         </div>
 
-        {/* Contact Section */}
         <div className="container mx-auto px-6 pb-16">
           <div className="bg-white rounded-xl shadow-lg p-8 md:p-12">
             <h2 className="text-3xl font-semibold text-[#333333] text-center mb-8">Get In Touch</h2>
@@ -168,14 +151,13 @@ function AboutUs() {
                   <MapPin className="text-white" size={24} />
                 </div>
                 <h3 className="text-lg font-semibold text-[#333333] mb-2">Find Us</h3>
-                <p className="text-[#333333]">MAIT,BLock 11</p>
+                <p className="text-[#333333]">MAIT,Block 11</p>
                 <p className="text-[#333333] text-sm">Student Community</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* CTA Section */}
         <div className="container mx-auto px-6 pb-16">
           <div className="bg-[#F47C26] rounded-xl p-8 md:p-12 text-center text-white">
             <h2 className="text-3xl font-bold mb-4">Ready to Join Our Community?</h2>
@@ -200,6 +182,7 @@ function AboutUs() {
         </div>
 
       </section>
+      <Footer />
     </>
   );
 }

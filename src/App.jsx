@@ -26,7 +26,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/post" element={<Post />} />
-        <Route path="/update-item/:id" element={<UpdateItem/>} />
+        <Route path="/update-item/:itemId" element={<UpdateItem/>} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/availableBuyers/:itemId" element={<AvailableBuyers setBuyerId={setBuyerId} />} />
         <Route path="/chat/:sellerId/:productId" element={<Chat buyerId={buyerId} />} />

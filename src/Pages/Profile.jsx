@@ -164,7 +164,7 @@ const Profile = () => {
                 </div>
               ))
             ) : (
-              <p className="text-center text-[#333333] text-xl">Loading...</p>
+              <p className="text-center text-[#333333] text-xl">No Items to show...</p>
             )}
             
           </section>

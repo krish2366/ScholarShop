@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import camera from "../assets/camera.svg";
 import Navbar from "../Components/Navbar";
@@ -167,10 +167,11 @@ const Post = () => {
                 Select Category
               </option>
               <option value="Books">Books</option>
-              <option value="Notes">Notes</option>
-              <option value="Drafter">Drafter</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Instruments">Instruments</option>
               <option value="Essentials">Essentials</option>
               <option value="PYQs">PYQs</option>
+              <option value="OTHERS">OTHERS</option>
             </select>
             {error && (
               <p className="text-red-500 text-sm text-center mb-4">{error}</p>
