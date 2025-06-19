@@ -145,7 +145,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="bg-white py-12">
+        {/* <div className="bg-white py-12">
           <div className="container mx-auto px-4 sm:px-6 lg:px-10">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
               {stats.map((stat, index) => (
@@ -159,7 +159,7 @@ const Home = () => {
               ))}
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-10 py-16">
           <div className="text-center mb-12">
@@ -171,7 +171,8 @@ const Home = () => {
           
           <div id="products" className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {categories.map((category, index) => (
-              <button
+              <Link
+                to={`/category/${category.name}`}
                 key={index}
                 className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2"
               >
@@ -189,7 +190,7 @@ const Home = () => {
                     {category.name}
                   </h3>
                 </div>
-              </button>
+              </Link>
             ))}
           </div>
         </div>
