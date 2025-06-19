@@ -11,6 +11,8 @@ import AvailableBuyers from './Pages/AvailableBuyers';
 import { useState } from 'react';
 import UpdateItem from './Pages/UpdateItem';
 import CategoryProductsPage from './Pages/Category';
+import AboutUs from './Pages/AboutUs'; 
+
 
 function App() {
 
@@ -20,6 +22,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/signup" element={<Signup />} />
+        <Route path="/about" element={<AboutUs />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/post" element={<Post />} />
