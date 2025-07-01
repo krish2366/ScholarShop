@@ -68,7 +68,10 @@ function Login() {
           <h2 className="text-3xl font-bold text-[#F47C26] text-center">
             Login to Your Account
           </h2>
-          <button className="w-full bg-white font-semibold rounded-lg p-2 mt-4 flex items-center justify-center gap-4 shadow-md">
+          <button
+            className="w-full bg-white font-semibold rounded-lg p-2 mt-4 flex items-center justify-center gap-4 shadow-md"
+            onClick={() => window.location.href = "http://localhost:5000/auth/google"}
+          >
             <img src={google} alt="google" className="h-6" />
             <span className="text-[#333333]">Login with Google</span>
           </button>
