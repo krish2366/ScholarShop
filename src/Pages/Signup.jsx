@@ -1,12 +1,14 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import supimg from "../assets/signup.svg";
+// import google from "../assets/google.svg"; // Removed as the file does not exist
 import Navbar from "../Components/Navbar"; 
 
 
 function Signup() {
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -15,6 +17,13 @@ function Signup() {
   const [useEmail, setUseEmail] = useState(true);
   const [error, setError] = useState("");
   const [isSigningUp, setIsSigningUp] = useState(false);
+
+  useEffect(() => {
+    const authError = searchParams.get("error");
+    if (authError === "auth_failed") {
+      setError("Google authentication failed. Please try again.");
+    }
+  }, [searchParams]);
 
     const handleClick = async (e) => {
       e.preventDefault();
@@ -160,6 +169,16 @@ function Signup() {
             </button>
 
           </form>
+
+          <div className="flex flex-col items-center">
+            <button
+              className="w-full bg-white font-semibold rounded-lg p-2 mt-4 flex items-center justify-center gap-4 shadow-md"
+              onClick={() => window.location.href = "http://localhost:5000/auth/google"} // Ensure backend URL matches
+            >
+              {/* Removed google image as the file does not exist */}
+              <span className="text-[#333333]">Sign Up with Google</span>
+            </button>
+          </div>
 
           {/* Login Link */}
           <div className="mt-4 text-center">

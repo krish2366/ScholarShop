@@ -12,7 +12,7 @@ import { useState } from 'react';
 import UpdateItem from './Pages/UpdateItem';
 import CategoryProductsPage from './Pages/Category';
 import AboutUs from './Pages/AboutUs'; 
-
+import AuthSuccess from "./Pages/AuthSuccess";
 
 function App() {
 
@@ -32,6 +32,7 @@ function App() {
         <Route path="/chat/:sellerId/:productId" element={<Chat buyerId={buyerId} />} />
         <Route path="/item/:id" element={<Item/>} />
         <Route path="/category/:category" element={<CategoryProductsPage/>} />
+        <Route path="/auth/success" element={<AuthSuccess />} />
         <Route path="*" element={<div>404 page not found</div>} />
       </Routes>
     </BrowserRouter>
