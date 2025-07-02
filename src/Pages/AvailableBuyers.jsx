@@ -232,27 +232,52 @@ function AvailableBuyers() {
 
         const fetchUsers = async () => {
             const names = {};
+            const token = localStorage.getItem("accessToken");
             
             for (const room of availableRooms) {
                 const buyerId = room.split("-")[1];
                 logDebug(`Fetch User ${buyerId}`, { room });
                 
                 try {
-                    const res = await fetch(`http://localhost:5000/auth/${buyerId}`);
-                    if (res.ok) {
-                        const response = await res.json();
-                        logDebug(`User Data ${buyerId}`, response);
-                        names[room] = response.data?.userName || `User ${buyerId}`;
+                    console.log(`Fetching user data for ID: ${buyerId}`);
+                    
+                    // Use the correct route: /user/:userId
+                    const response = await fetch(`http://localhost:5000/auth/user/${buyerId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    console.log(`User endpoint response for ${buyerId}:`, {
+                        status: response.status,
+                        ok: response.ok,
+                        statusText: response.statusText,
+                        url: `http://localhost:5000/user/${buyerId}`
+                    });
+                    
+                    if (response.ok) {
+                        const userData = await response.json();
+                        console.log(`Raw user data for ${buyerId}:`, userData);
+                        console.log(`Available properties for ${buyerId}:`, Object.keys(userData));
+                        logDebug(`User Data from /user/${buyerId}`, userData);
+                        
+                        const userName = userData.userName || userData.name || `User ${buyerId}`;
+                        console.log(`Extracted username for ${buyerId}:`, userName);
+                        names[room] = userName;
                     } else {
-                        logDebug(`User Fetch Error ${buyerId}`, res.status);
+                        console.log(`User ${buyerId} not found (${response.status}), using fallback name`);
+                        logDebug(`User ${buyerId} not found`, response.status);
                         names[room] = `User ${buyerId}`;
                     }
                 } catch (error) {
+                    console.error(`User fetch exception for ${buyerId}:`, error);
                     logDebug(`User Fetch Exception ${buyerId}`, error);
                     names[room] = `User ${buyerId}`;
                 }
             }
             
+            console.log("Final extracted names:", names);
             logDebug("Final Room Names", names);
             setRoomName(names);
             setLoading(false);

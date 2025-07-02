@@ -33,8 +33,72 @@ function Chat({buyerId}) {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [reconnectAttempts, setReconnectAttempts] = useState(0);
+    const [otherUserName, setOtherUserName] = useState("Other"); // Add this state
 
     const chatBoxRef = useRef(null);
+
+    // Add function to fetch other user's name
+    const fetchOtherUserName = async () => {
+        try {
+            const token = localStorage.getItem("accessToken");
+            if (!token) return;
+
+            let otherUserId;
+            if (userRole === 'buyer') {
+                // Buyer wants seller's name - get from itemInfo
+                otherUserId = itemInfo?.sellerId || itemInfo?.userId;
+            } else {
+                // Seller wants buyer's name
+                otherUserId = actualBuyerId_state;
+            }
+
+            if (!otherUserId) {
+                console.log("No otherUserId found:", { userRole, itemInfo, actualBuyerId_state });
+                return;
+            }
+
+            console.log("Fetching username for user:", otherUserId, "| User role:", userRole);
+
+            // Use the correct route pattern: /user/:userId
+            const response = await fetch(`http://localhost:5000/auth/user/${otherUserId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log("User endpoint response:", {
+                status: response.status,
+                ok: response.ok,
+                statusText: response.statusText,
+                url: `http://localhost:5000/auth/user/${otherUserId}`
+            });
+
+            if (response.ok) {
+                const userData = await response.json();
+                console.log("Raw user data received:", userData);
+                console.log("Available properties:", Object.keys(userData));
+                
+                // Fix: Access userName from the nested data object
+                const userName = userData.data?.userName || userData.data?.name || userData.userName || userData.name || `User ${otherUserId}`;
+                console.log("Extracted username:", userName);
+                setOtherUserName(userName);
+            } else {
+                console.log(`User ${otherUserId} not found (${response.status}), using fallback name`);
+                setOtherUserName(`User ${otherUserId}`);
+            }
+        } catch (error) {
+            console.error("Error fetching other user name:", error);
+            setOtherUserName("Other");
+        }
+    };
+
+    // Fetch other user's name when chat context is established
+    useEffect(() => {
+        if (userRole && itemInfo && actualBuyerId_state && !isLoading) {
+            fetchOtherUserName();
+        }
+    }, [userRole, itemInfo, actualBuyerId_state, isLoading]);
 
     // Load historical messages from HTTP endpoint
     const loadHistoricalMessages = async () => {
@@ -539,6 +603,9 @@ function Chat({buyerId}) {
                     <span className="block text-xs font-normal text-gray-400">
                         Messages: {messages.length} | Socket: {socket?.connected ? 'Connected' : 'Disconnected'}
                     </span>
+                    <span className="block text-xs font-normal text-gray-400">
+                        Chatting with: {otherUserName}
+                    </span>
                 </h1>
 
                 <div className="border-8 border-gray-500 rounded-lg border-double m-6 p-6 h-[70vh]">
@@ -575,7 +642,7 @@ function Chat({buyerId}) {
                                                 isCurrentUser ? 'bg-blue-100' : 'bg-gray-100'
                                             }`}>
                                                 <span className="font-bold">
-                                                    {isCurrentUser ? "You" : "Other"}:
+                                                    {isCurrentUser ? "You" : otherUserName}:
                                                 </span>
                                                 <p>{msg.message}</p>
                                                 {msg.timestamp && (
