@@ -60,18 +60,52 @@ function Chat({buyerId}) {
                 const currentUserId = parseInt(userId);
                 const buyerUserId = parseInt(actualBuyerId_state);
                 
-                // Filter messages for this specific conversation
+                console.log("Filtering parameters:", {
+                    currentUserId,
+                    buyerUserId,
+                    userRole,
+                    productId_state
+                });
+
+                // Simplified filtering: get messages between the two participants for this item
                 const conversationMessages = historicalChats.filter(chat => {
                     const chatUserId = parseInt(chat.userId);
-                    const chatReceiverId = parseInt(chat.recieverId);
                     
-                    // Include messages between current user and the other party
-                    return (
-                        (chatUserId === currentUserId && chatReceiverId === buyerUserId) ||
-                        (chatUserId === buyerUserId && chatReceiverId === currentUserId) ||
-                        (chatUserId === buyerUserId || chatUserId === currentUserId)
-                    );
+                    console.log(`Processing chat ${chat.id}:`, {
+                        chatUserId,
+                        currentUserId,
+                        buyerUserId,
+                        userRole
+                    });
+                    
+                    // For this conversation, we want messages from either participant
+                    // Seller (currentUserId = 1) wants messages from buyer (buyerUserId = 3) AND their own messages
+                    // Buyer (currentUserId = 3) wants messages from seller (1) AND their own messages
+                    
+                    let shouldInclude = false;
+                    
+                    if (userRole === 'buyer') {
+                        // Buyer sees: their own messages + seller's messages
+                        shouldInclude = (chatUserId === currentUserId) || (chatUserId === 1); // 1 is seller ID
+                        console.log(`Buyer filter for chat ${chat.id}:`, {
+                            isOwnMessage: chatUserId === currentUserId,
+                            isSellerMessage: chatUserId === 1,
+                            shouldInclude
+                        });
+                    } else {
+                        // Seller sees: their own messages + specific buyer's messages
+                        shouldInclude = (chatUserId === currentUserId) || (chatUserId === buyerUserId);
+                        console.log(`Seller filter for chat ${chat.id}:`, {
+                            isOwnMessage: chatUserId === currentUserId,
+                            isBuyerMessage: chatUserId === buyerUserId,
+                            shouldInclude
+                        });
+                    }
+                    
+                    return shouldInclude;
                 });
+
+                console.log("Filtered conversation messages:", conversationMessages);
 
                 // Convert to consistent message format with parsed IDs
                 const formattedMessages = conversationMessages.map(chat => ({
