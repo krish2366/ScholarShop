@@ -33,8 +33,72 @@ function Chat({buyerId}) {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [reconnectAttempts, setReconnectAttempts] = useState(0);
+    const [otherUserName, setOtherUserName] = useState("Other"); // Add this state
 
     const chatBoxRef = useRef(null);
+
+    // Add function to fetch other user's name
+    const fetchOtherUserName = async () => {
+        try {
+            const token = localStorage.getItem("accessToken");
+            if (!token) return;
+
+            let otherUserId;
+            if (userRole === 'buyer') {
+                // Buyer wants seller's name - get from itemInfo
+                otherUserId = itemInfo?.sellerId || itemInfo?.userId;
+            } else {
+                // Seller wants buyer's name
+                otherUserId = actualBuyerId_state;
+            }
+
+            if (!otherUserId) {
+                console.log("No otherUserId found:", { userRole, itemInfo, actualBuyerId_state });
+                return;
+            }
+
+            console.log("Fetching username for user:", otherUserId, "| User role:", userRole);
+
+            // Use the correct route pattern: /user/:userId
+            const response = await fetch(`http://localhost:5000/auth/user/${otherUserId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log("User endpoint response:", {
+                status: response.status,
+                ok: response.ok,
+                statusText: response.statusText,
+                url: `http://localhost:5000/auth/user/${otherUserId}`
+            });
+
+            if (response.ok) {
+                const userData = await response.json();
+                console.log("Raw user data received:", userData);
+                console.log("Available properties:", Object.keys(userData));
+                
+                // Fix: Access userName from the nested data object
+                const userName = userData.data?.userName || userData.data?.name || userData.userName || userData.name || `User ${otherUserId}`;
+                console.log("Extracted username:", userName);
+                setOtherUserName(userName);
+            } else {
+                console.log(`User ${otherUserId} not found (${response.status}), using fallback name`);
+                setOtherUserName(`User ${otherUserId}`);
+            }
+        } catch (error) {
+            console.error("Error fetching other user name:", error);
+            setOtherUserName("Other");
+        }
+    };
+
+    // Fetch other user's name when chat context is established
+    useEffect(() => {
+        if (userRole && itemInfo && actualBuyerId_state && !isLoading) {
+            fetchOtherUserName();
+        }
+    }, [userRole, itemInfo, actualBuyerId_state, isLoading]);
 
     // Load historical messages from HTTP endpoint
     const loadHistoricalMessages = async () => {
@@ -60,18 +124,52 @@ function Chat({buyerId}) {
                 const currentUserId = parseInt(userId);
                 const buyerUserId = parseInt(actualBuyerId_state);
                 
-                // Filter messages for this specific conversation
+                console.log("Filtering parameters:", {
+                    currentUserId,
+                    buyerUserId,
+                    userRole,
+                    productId_state
+                });
+
+                // Simplified filtering: get messages between the two participants for this item
                 const conversationMessages = historicalChats.filter(chat => {
                     const chatUserId = parseInt(chat.userId);
-                    const chatReceiverId = parseInt(chat.recieverId);
                     
-                    // Include messages between current user and the other party
-                    return (
-                        (chatUserId === currentUserId && chatReceiverId === buyerUserId) ||
-                        (chatUserId === buyerUserId && chatReceiverId === currentUserId) ||
-                        (chatUserId === buyerUserId || chatUserId === currentUserId)
-                    );
+                    console.log(`Processing chat ${chat.id}:`, {
+                        chatUserId,
+                        currentUserId,
+                        buyerUserId,
+                        userRole
+                    });
+                    
+                    // For this conversation, we want messages from either participant
+                    // Seller (currentUserId = 1) wants messages from buyer (buyerUserId = 3) AND their own messages
+                    // Buyer (currentUserId = 3) wants messages from seller (1) AND their own messages
+                    
+                    let shouldInclude = false;
+                    
+                    if (userRole === 'buyer') {
+                        // Buyer sees: their own messages + seller's messages
+                        shouldInclude = (chatUserId === currentUserId) || (chatUserId === 1); // 1 is seller ID
+                        console.log(`Buyer filter for chat ${chat.id}:`, {
+                            isOwnMessage: chatUserId === currentUserId,
+                            isSellerMessage: chatUserId === 1,
+                            shouldInclude
+                        });
+                    } else {
+                        // Seller sees: their own messages + specific buyer's messages
+                        shouldInclude = (chatUserId === currentUserId) || (chatUserId === buyerUserId);
+                        console.log(`Seller filter for chat ${chat.id}:`, {
+                            isOwnMessage: chatUserId === currentUserId,
+                            isBuyerMessage: chatUserId === buyerUserId,
+                            shouldInclude
+                        });
+                    }
+                    
+                    return shouldInclude;
                 });
+
+                console.log("Filtered conversation messages:", conversationMessages);
 
                 // Convert to consistent message format with parsed IDs
                 const formattedMessages = conversationMessages.map(chat => ({
@@ -505,6 +603,9 @@ function Chat({buyerId}) {
                     <span className="block text-xs font-normal text-gray-400">
                         Messages: {messages.length} | Socket: {socket?.connected ? 'Connected' : 'Disconnected'}
                     </span>
+                    <span className="block text-xs font-normal text-gray-400">
+                        Chatting with: {otherUserName}
+                    </span>
                 </h1>
 
                 <div className="border-8 border-gray-500 rounded-lg border-double m-6 p-6 h-[70vh]">
@@ -541,7 +642,7 @@ function Chat({buyerId}) {
                                                 isCurrentUser ? 'bg-blue-100' : 'bg-gray-100'
                                             }`}>
                                                 <span className="font-bold">
-                                                    {isCurrentUser ? "You" : "Other"}:
+                                                    {isCurrentUser ? "You" : otherUserName}:
                                                 </span>
                                                 <p>{msg.message}</p>
                                                 {msg.timestamp && (
