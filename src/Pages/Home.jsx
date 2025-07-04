@@ -145,22 +145,6 @@ const Home = () => {
           </div>
         </div>
 
-        {/* <div className="bg-white py-12">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-10">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-              {stats.map((stat, index) => (
-                <div key={index} className="text-center group">
-                  <div className="w-16 h-16 bg-[#F47C26] rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <stat.icon className="h-8 w-8 text-white" />
-                  </div>
-                  <div className="text-2xl font-bold text-[#333333] mb-1">{stat.value}</div>
-                  <div className="text-gray-600 text-sm">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div> */}
-
         <div className="container mx-auto px-4 sm:px-6 lg:px-10 py-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-[#333333] mb-4">

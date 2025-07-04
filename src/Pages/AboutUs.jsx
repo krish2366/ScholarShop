@@ -1,6 +1,10 @@
 import { Mail, Phone, MapPin, Users, Target, Heart } from "lucide-react";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
+import aashi from "../assets/aashi.jpeg";
+import krish from "../assets/krish.jpeg";
+import aryan from "../assets/aryan.jpeg";
+import our_story from "../assets/our_story.jpeg";
 
 function AboutUs() {
   const teamMembers = [
@@ -8,21 +12,21 @@ function AboutUs() {
       name: "Krish",
       role: "Frontend Developer",
       bio: "Passionate about creating solutions that make student life easier. Loves coding and building user-friendly platforms.",
-      image: "https://via.placeholder.com/300x300/F47C26/ffffff?text=Member+1",
+      image: krish,
       email: "krish2366@gmail.com"
     },
     {
       name: "Aashi Jain", 
       role: "UI/UX Designer",
       bio: "Creative mind behind ScholarShop's design. Believes in the power of good design to solve real problems.",
-      image: "https://via.placeholder.com/300x300/F47C26/ffffff?text=Member+2",
+      image: aashi,
       email: "member2@scholarshop.com"
     },
     {
       name: "Aryan Mishra",
       role: "Backend Developer",
       bio: "Handles the business side logic of ScholarShop. Passionate about connecting students and building community.",
-      image: "https://via.placeholder.com/300x300/F47C26/ffffff?text=Member+3", 
+      image: aryan, 
       email: "aryan12.mishra2321@gmail.com"
     }
   ];
@@ -58,7 +62,7 @@ function AboutUs() {
               </div>
               <div className="w-full md:w-1/2">
                 <img 
-                  src="https://via.placeholder.com/500x400/F47C26/ffffff?text=Our+Journey" 
+                  src={our_story} 
                   alt="Our Story" 
                   className="rounded-lg shadow-md w-full"
                 />
@@ -108,7 +112,7 @@ function AboutUs() {
                 <img 
                   src={member.image} 
                   alt={member.name}
-                  className="w-full h-64 object-cover"
+                  className="w-full h-64 object-center object-cover"
                 />
                 <div className="p-6">
                   <h3 className="text-xl font-semibold text-[#333333] mb-2">{member.name}</h3>

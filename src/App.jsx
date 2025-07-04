@@ -13,6 +13,7 @@ import UpdateItem from './Pages/UpdateItem';
 import CategoryProductsPage from './Pages/Category';
 import AboutUs from './Pages/AboutUs'; 
 import AuthSuccess from "./Pages/AuthSuccess";
+import FeedbackPage from './Pages/Feedback';
 
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/post" element={<Post />} />
+        <Route path="/feedback" element={<FeedbackPage />} />
         <Route path="/update-item/:itemId" element={<UpdateItem/>} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/availableBuyers/:itemId" element={<AvailableBuyers setBuyerId={setBuyerId} />} />

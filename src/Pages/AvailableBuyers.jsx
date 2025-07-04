@@ -311,42 +311,7 @@ function AvailableBuyers() {
             <section className="bg-[#FFF4DC] py-10 min-h-screen">
                 <div className="bg-white mx-14 px-5 pt-5 pb-10 rounded-xl shadow-lg">
                     <h1 className="text-2xl font-semibold text-center mb-6">Available Buyers</h1>
-                    
-                    {/* Comprehensive Debug Section */}
-                    <div className="mb-6 p-4 bg-gray-100 rounded-lg text-xs">
-                        <h3 className="font-bold mb-2">Debug Information:</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <p><strong>ItemId:</strong> {itemId}</p>
-                                <p><strong>UserId:</strong> {userId}</p>
-                                <p><strong>Recent Chats:</strong> {recentChats.length}</p>
-                                <p><strong>Available Rooms:</strong> {availableRooms.length}</p>
-                                <p><strong>Socket Connected:</strong> {socket ? 'Yes' : 'No'}</p>
-                            </div>
-                            <div>
-                                <p><strong>Loading:</strong> {loading ? 'Yes' : 'No'}</p>
-                                <p><strong>Rooms:</strong> {JSON.stringify(availableRooms)}</p>
-                                <p><strong>Token Exists:</strong> {localStorage.getItem("accessToken") ? 'Yes' : 'No'}</p>
-                            </div>
-                        </div>
-                        
-                        {/* Raw Debug Data */}
-                        <details className="mt-4">
-                            <summary className="cursor-pointer font-bold">Raw Debug Log</summary>
-                            <pre className="mt-2 text-xs overflow-auto max-h-40 bg-white p-2 rounded">
-                                {JSON.stringify(debugInfo, null, 2)}
-                            </pre>
-                        </details>
-                        
-                        {/* Raw Chats Data */}
-                        <details className="mt-2">
-                            <summary className="cursor-pointer font-bold">Raw Recent Chats</summary>
-                            <pre className="mt-2 text-xs overflow-auto max-h-40 bg-white p-2 rounded">
-                                {JSON.stringify(recentChats, null, 2)}
-                            </pre>
-                        </details>
-                    </div>
-                    
+                                        
                     {/* Show recent chats info */}
                     {recentChats.length > 0 && (
                         <div className="mb-4 text-center text-sm text-gray-600">

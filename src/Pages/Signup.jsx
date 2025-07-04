@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import supimg from "../assets/signup.svg";
-// import google from "../assets/google.svg"; // Removed as the file does not exist
+import google from "../assets/google_logo.svg";
 import Navbar from "../Components/Navbar"; 
 
 
@@ -56,7 +56,7 @@ function Signup() {
 
         if(resData.success){
           localStorage.setItem("accessToken", resData.accessToken);
-          localStorage.setItem("userId", resData.userId);
+          localStorage.setItem("userId", resData.user.id);
           navigate("/");
         }
       } catch (error) {
@@ -176,6 +176,7 @@ function Signup() {
               onClick={() => window.location.href = "http://localhost:5000/auth/google"} // Ensure backend URL matches
             >
               {/* Removed google image as the file does not exist */}
+              <img src={google} alt="google" className="h-6" />
               <span className="text-[#333333]">Sign Up with Google</span>
             </button>
           </div>
