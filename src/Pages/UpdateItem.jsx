@@ -77,7 +77,7 @@ function UpdateItem() {
     formData.append("description", description);
     formData.append("price", parseFloat(price));
     formData.append("category", category);
-    photos.forEach((photo) => formData.append("photos", photo));
+    photos.forEach((photo) => formData.append("images", photo)); // Changed from "photos" to "images"
 
     try {
       const res = await fetch(`http://localhost:5000/item/update-item/${itemId}`, {
