@@ -8,6 +8,8 @@ function Item() {
   const [product, setProduct] = useState({});
   const [error, setError] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [reportMessage, setReportMessage] = useState("");
+  const [showReportModal, setShowReportModal] = useState(false);
   const userId = localStorage.getItem("userId");
   const { id } = useParams();
 
@@ -68,6 +70,45 @@ function Item() {
 
   const senderClick = () => {
     navigate(`/availableBuyers/${product.id}`);
+  };
+
+  const handleReportItem = async () => {
+    if (!userId) {
+      navigate("/login");
+      return;
+    }
+
+    if (!reportMessage.trim()) {
+      alert("Please provide a reason for reporting this item.");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await fetch(`http://localhost:5000/report/report-item/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          complaint: reportMessage
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert("Item reported successfully. Thank you for helping keep our platform safe.");
+        setShowReportModal(false);
+        setReportMessage("");
+      } else {
+        alert(data.message || "Failed to report item. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error reporting item:", err);
+      alert("An error occurred while reporting the item. Please try again.");
+    }
   };
 
   const getCurrentImageUrl = () => {
@@ -209,17 +250,58 @@ function Item() {
                         </Link>
                     </>
                 ) : (
-                    <button
-                        onClick={buyerClick}
-                        className="w-full bg-[#F47C26] text-white py-2 rounded-lg font-semibant hover:bg-orange-600 transition"
-                    >
-                        Chat with Seller
-                    </button>
+                    <>
+                        <button
+                            onClick={buyerClick}
+                            className="w-full bg-[#F47C26] text-white py-2 rounded-lg font-semibant hover:bg-orange-600 transition"
+                        >
+                            Chat with Seller
+                        </button>
+                        <button
+                            onClick={() => setShowReportModal(true)}
+                            className="w-full mt-4 bg-red-500 text-white py-2 rounded-lg font-semibold hover:bg-red-600 transition"
+                        >
+                            Report Item
+                        </button>
+                    </>
                 )
             }    
           </div>
         </div>
       </section>
+
+      {/* Report Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4">
+            <h3 className="text-xl font-semibold text-[#F47C26] mb-4">Report Item</h3>
+            <p className="text-[#333333] mb-4">Please provide a reason for reporting this item:</p>
+            <textarea
+              value={reportMessage}
+              onChange={(e) => setReportMessage(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg resize-none h-24 focus:outline-none focus:border-[#F47C26]"
+              placeholder="Describe why you're reporting this item..."
+            />
+            <div className="flex gap-4 mt-4">
+              <button
+                onClick={() => {
+                  setShowReportModal(false);
+                  setReportMessage("");
+                }}
+                className="flex-1 bg-gray-500 text-white py-2 rounded-lg font-semibold hover:bg-gray-600 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleReportItem}
+                className="flex-1 bg-red-500 text-white py-2 rounded-lg font-semibold hover:bg-red-600 transition"
+              >
+                Submit Report
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
