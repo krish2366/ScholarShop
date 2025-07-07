@@ -8,10 +8,12 @@ import {
   FaEye,
   FaCog
 } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [adminData, setAdminData] = useState(null);
   const [analytics, setAnalytics] = useState({
     users: null,
@@ -108,28 +110,28 @@ const AdminDashboard = () => {
       description: 'Manage user accounts and verification',
       icon: FaUsers,
       color: 'from-blue-500 to-blue-600',
-      href: '/admin/users'
+      path: '/admin/users'
     },
     {
       title: 'View All Items',
       description: 'Monitor and moderate item listings',
       icon: FaBox,
       color: 'from-green-500 to-green-600',
-      href: '/admin/items'
+      path: '/admin/items'
     },
     {
       title: 'Analytics',
       description: 'View detailed platform analytics',
       icon: FaChartLine,
       color: 'from-purple-500 to-purple-600',
-      href: '/admin/analytics'
+      path: '/admin/analytics'
     },
     {
       title: 'Settings',
       description: 'Configure platform settings',
       icon: FaCog,
       color: 'from-gray-500 to-gray-600',
-      href: '/admin/settings'
+      path: '/admin/settings'
     }
   ];
 
@@ -177,9 +179,9 @@ const AdminDashboard = () => {
             <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {quickActions.map((action, index) => (
-                <a
+                <div
                   key={action.title}
-                  href={action.href}
+                  onClick={() => navigate(action.path)}
                   className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer hover:scale-105 active:scale-95 transform transition-transform duration-200"
                 >
                   <div className={`p-3 rounded-lg bg-gradient-to-r ${action.color} w-fit mb-4`}>
@@ -187,7 +189,7 @@ const AdminDashboard = () => {
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-2">{action.title}</h3>
                   <p className="text-sm text-gray-600">{action.description}</p>
-                </a>
+                </div>
               ))}
             </div>
           </div>

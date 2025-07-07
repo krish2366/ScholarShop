@@ -16,7 +16,10 @@ import AuthSuccess from "./Pages/AuthSuccess";
 import FeedbackPage from './Pages/Feedback';
 import AdminLogin from './Pages/admin/AdminLogin';
 import AdminDashboard from './Pages/admin/AdminDashboard';
-import ProtectedAdminRoute from './components/admin/ProtectedAdminRoute';
+import AdminUsers from './Pages/admin/AdminUsers';
+import AdminItems from './Pages/admin/AdminItems';
+import AdminAnalytics from './Pages/admin/AdminAnalytics';
+import AdminProtectedRoute from './components/AdminProtectedRoute';
 
 function App() {
 
@@ -42,29 +45,24 @@ function App() {
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={
-          <ProtectedAdminRoute>
+          <AdminProtectedRoute>
             <AdminDashboard />
-          </ProtectedAdminRoute>
+          </AdminProtectedRoute>
         } />
         <Route path="/admin/users" element={
-          <ProtectedAdminRoute>
-            <AdminDashboard />
-          </ProtectedAdminRoute>
+          <AdminProtectedRoute>
+            <AdminUsers />
+          </AdminProtectedRoute>
         } />
         <Route path="/admin/items" element={
-          <ProtectedAdminRoute>
-            <AdminDashboard />
-          </ProtectedAdminRoute>
+          <AdminProtectedRoute>
+            <AdminItems />
+          </AdminProtectedRoute>
         } />
         <Route path="/admin/analytics" element={
-          <ProtectedAdminRoute>
-            <AdminDashboard />
-          </ProtectedAdminRoute>
-        } />
-        <Route path="/admin/settings" element={
-          <ProtectedAdminRoute>
-            <AdminDashboard />
-          </ProtectedAdminRoute>
+          <AdminProtectedRoute>
+            <AdminAnalytics />
+          </AdminProtectedRoute>
         } />
         
         <Route path="*" element={<div>404 page not found</div>} />
@@ -72,5 +70,6 @@ function App() {
     </Router>
   )
 }
+
 
 export default App
