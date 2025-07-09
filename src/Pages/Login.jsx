@@ -142,6 +142,16 @@ function Login() {
                 Sign Up
               </Link>
             </p>
+            {/* Add Admin Login Link */}
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <p className="text-sm text-gray-500 mb-2">Are you an administrator?</p>
+              <Link 
+                to="/admin/login" 
+                className="inline-flex items-center px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-md hover:bg-gray-700 transition-colors"
+              >
+                Admin Login
+              </Link>
+            </div>
           </div>
         </div>
       </div>

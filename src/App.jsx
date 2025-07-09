@@ -1,5 +1,5 @@
 import './App.css'
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from './Pages/Home'
 import Login from './Pages/Login'
 import Post from './Pages/Post'
@@ -14,13 +14,19 @@ import CategoryProductsPage from './Pages/Category';
 import AboutUs from './Pages/AboutUs'; 
 import AuthSuccess from "./Pages/AuthSuccess";
 import FeedbackPage from './Pages/Feedback';
+import AdminLogin from './Pages/admin/AdminLogin';
+import AdminDashboard from './Pages/admin/AdminDashboard';
+import AdminUsers from './Pages/admin/AdminUsers';
+import AdminItems from './Pages/admin/AdminItems';
+import AdminAnalytics from './Pages/admin/AdminAnalytics';
+import AdminProtectedRoute from './components/AdminProtectedRoute';
 
 function App() {
 
   const [buyerId, setBuyerId] = useState(null);
 
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/about" element={<AboutUs />} />
@@ -35,10 +41,35 @@ function App() {
         <Route path="/item/:id" element={<Item/>} />
         <Route path="/category/:category" element={<CategoryProductsPage/>} />
         <Route path="/auth/success" element={<AuthSuccess />} />
+        
+        {/* Admin Routes */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={
+          <AdminProtectedRoute>
+            <AdminDashboard />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/users" element={
+          <AdminProtectedRoute>
+            <AdminUsers />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/items" element={
+          <AdminProtectedRoute>
+            <AdminItems />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/analytics" element={
+          <AdminProtectedRoute>
+            <AdminAnalytics />
+          </AdminProtectedRoute>
+        } />
+        
         <Route path="*" element={<div>404 page not found</div>} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   )
 }
+
 
 export default App
