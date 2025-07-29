@@ -19,7 +19,12 @@ import AdminDashboard from './Pages/admin/AdminDashboard';
 import AdminUsers from './Pages/admin/AdminUsers';
 import AdminItems from './Pages/admin/AdminItems';
 import AdminAnalytics from './Pages/admin/AdminAnalytics';
+import AdminSettings from './Pages/admin/AdminSettings';
+import AdminReports from './Pages/admin/AdminReports';
+import AdminNotifications from './Pages/admin/AdminNotifications';
+import AdminAuditLogs from './Pages/admin/AdminAuditLogs';
 import AdminProtectedRoute from './components/AdminProtectedRoute';
+import MaintenancePage from './Pages/MaintenancePage';
 
 function App() {
 
@@ -64,7 +69,30 @@ function App() {
             <AdminAnalytics />
           </AdminProtectedRoute>
         } />
+        <Route path="/admin/settings" element={
+          <AdminProtectedRoute requiredRole="super_admin">
+            <AdminSettings />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/reports" element={
+          <AdminProtectedRoute>
+            <AdminReports />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/notifications" element={
+          <AdminProtectedRoute>
+            <AdminNotifications />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/audit-logs" element={
+          <AdminProtectedRoute requiredRole="super_admin">
+            <AdminAuditLogs />
+          </AdminProtectedRoute>
+        } />
         
+        {/* Maintenance Page */}
+        <Route path="/maintenance" element={<MaintenancePage />} />
+
         <Route path="*" element={<div>404 page not found</div>} />
       </Routes>
     </Router>

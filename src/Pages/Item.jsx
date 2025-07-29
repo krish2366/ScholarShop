@@ -9,6 +9,7 @@ function Item() {
   const [error, setError] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [reportMessage, setReportMessage] = useState("");
+  const [reportType, setReportType] = useState("other"); 
   const [showReportModal, setShowReportModal] = useState(false);
   const userId = localStorage.getItem("userId");
   const { id } = useParams();
@@ -18,7 +19,6 @@ function Item() {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          console.log(data.data);
           const productData = { ...data.data };
           if (productData.imageUrl && typeof productData.imageUrl === 'string') {
             try {
@@ -27,14 +27,14 @@ function Item() {
               console.log('Direct JSON parse failed, trying alternative parsing...');
               try {
                 let cleanedImageUrl = productData.imageUrl
-                  .replace(/\\/g, '') 
-                  .replace(/"/g, '"') 
+                  .replace(/\\/g, '')
+                  .replace(/"/g, '"')
                   .trim();
-                
+
                 if (cleanedImageUrl.startsWith('"') && cleanedImageUrl.endsWith('"')) {
                   cleanedImageUrl = cleanedImageUrl.slice(1, -1);
                 }
-                
+
                 productData.imageUrl = JSON.parse(cleanedImageUrl);
               } catch (e2) {
                 console.error('All parsing attempts failed:', e2);
@@ -48,7 +48,6 @@ function Item() {
               }
             }
           }
-          console.log('Processed product data:', productData);
           setProduct(productData);
         } else {
           throw new Error(data.message || "Item not found.");
@@ -92,7 +91,8 @@ function Item() {
           "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
-          complaint: reportMessage
+          complaint: reportMessage,
+          type: reportType // Send the selected report type
         })
       });
 
@@ -102,6 +102,7 @@ function Item() {
         alert("Item reported successfully. Thank you for helping keep our platform safe.");
         setShowReportModal(false);
         setReportMessage("");
+        setReportType("other"); // Reset report type
       } else {
         alert(data.message || "Failed to report item. Please try again.");
       }
@@ -120,7 +121,7 @@ function Item() {
 
   const nextImage = () => {
     if (product.imageUrl && Array.isArray(product.imageUrl) && product.imageUrl.length > 1) {
-      setCurrentImageIndex((prev) => 
+      setCurrentImageIndex((prev) =>
         prev === product.imageUrl.length - 1 ? 0 : prev + 1
       );
     }
@@ -128,7 +129,7 @@ function Item() {
 
   const prevImage = () => {
     if (product.imageUrl && Array.isArray(product.imageUrl) && product.imageUrl.length > 1) {
-      setCurrentImageIndex((prev) => 
+      setCurrentImageIndex((prev) =>
         prev === 0 ? product.imageUrl.length - 1 : prev - 1
       );
     }
@@ -157,7 +158,7 @@ function Item() {
               alt={product.title}
               className="w-full h-96 object-cover rounded-lg"
             />
-            
+
             {product.imageUrl && Array.isArray(product.imageUrl) && product.imageUrl.length > 1 && (
               <>
                 <button
@@ -172,15 +173,15 @@ function Item() {
                 >
                   &#8250;
                 </button>
-                
+
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
                   {product.imageUrl.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
-                      className={`w-3 h-3 rounded-full transition ${
-                        index === currentImageIndex 
-                          ? 'bg-white' 
+                      className={`w-3 h-3 rounded-full transition
+                        ${index === currentImageIndex
+                          ? 'bg-white'
                           : 'bg-white bg-opacity-50'
                       }`}
                     />
@@ -190,7 +191,7 @@ function Item() {
             )}
           </div>
 
-       
+
           {product.imageUrl && Array.isArray(product.imageUrl) && product.imageUrl.length > 1 && (
             <div className="flex gap-2 mb-6 overflow-x-auto">
               {product.imageUrl.map((imageUrl, index) => (
@@ -198,9 +199,9 @@ function Item() {
                   key={index}
                   src={imageUrl}
                   alt={`${product.title} ${index + 1}`}
-                  className={`w-20 h-20 object-cover rounded cursor-pointer transition ${
-                    index === currentImageIndex 
-                      ? 'border-2 border-[#F47C26]' 
+                  className={`w-20 h-20 object-cover rounded cursor-pointer transition
+                    ${index === currentImageIndex
+                      ? 'border-2 border-[#F47C26]'
                       : 'border border-gray-300 hover:border-[#F47C26]'
                   }`}
                   onClick={() => setCurrentImageIndex(index)}
@@ -265,7 +266,7 @@ function Item() {
                         </button>
                     </>
                 )
-            }    
+            }
           </div>
         </div>
       </section>
@@ -282,11 +283,25 @@ function Item() {
               className="w-full p-3 border border-gray-300 rounded-lg resize-none h-24 focus:outline-none focus:border-[#F47C26]"
               placeholder="Describe why you're reporting this item..."
             />
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Report Type:</label>
+              <select
+                value={reportType}
+                onChange={(e) => setReportType(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#F47C26]"
+              >
+                <option value="other">Other</option>
+                <option value="spam">Spam</option>
+                <option value="inappropriate">Inappropriate Content</option>
+                <option value="fraud">Fraudulent Activity</option>
+              </select>
+            </div>
             <div className="flex gap-4 mt-4">
               <button
                 onClick={() => {
                   setShowReportModal(false);
                   setReportMessage("");
+                  setReportType("other");
                 }}
                 className="flex-1 bg-gray-500 text-white py-2 rounded-lg font-semibold hover:bg-gray-600 transition"
               >

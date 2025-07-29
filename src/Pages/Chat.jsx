@@ -150,7 +150,7 @@ function Chat({buyerId}) {
                     
                     if (userRole === 'buyer') {
                         // Buyer sees: their own messages + seller's messages
-                        shouldInclude = (chatUserId === currentUserId) || (chatUserId === 1); // 1 is seller ID
+                        shouldInclude = (chatUserId === currentUserId) ; // 1 is seller ID
                         console.log(`Buyer filter for chat ${chat.id}:`, {
                             isOwnMessage: chatUserId === currentUserId,
                             isSellerMessage: chatUserId === 1,
