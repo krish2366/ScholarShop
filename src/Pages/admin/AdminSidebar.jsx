@@ -17,7 +17,7 @@ const AdminSidebar = () => {
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      await fetch('http://localhost:5000/admin/logout', {
+      await fetch('${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/logout', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

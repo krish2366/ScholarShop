@@ -6,12 +6,12 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/admin': 'http://localhost:5000',
-      '/auth/login': 'http://localhost:5000',
-      '/auth/signup': 'http://localhost:5000',
-      '/auth/google': 'http://localhost:5000',
-      '/auth/logout': 'http://localhost:5000',
-      '/api': 'http://localhost:5000'
+      '/admin': '${import.meta.env.VITE_MAIN_BACKEND_URL}',
+      '/auth/login': '${import.meta.env.VITE_MAIN_BACKEND_URL}',
+      '/auth/signup': '${import.meta.env.VITE_MAIN_BACKEND_URL}',
+      '/auth/google': '${import.meta.env.VITE_MAIN_BACKEND_URL}',
+      '/auth/logout': '${import.meta.env.VITE_MAIN_BACKEND_URL}',
+      '/api': '${import.meta.env.VITE_MAIN_BACKEND_URL}'
     }
   }
 })

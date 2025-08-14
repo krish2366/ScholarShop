@@ -15,7 +15,7 @@ function Item() {
   const { id } = useParams();
 
   useEffect(() => {
-    fetch(`http://localhost:5000/item/get-item-details/${id}`)
+    fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/item/get-item-details/${id}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
@@ -84,7 +84,7 @@ function Item() {
 
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await fetch(`http://localhost:5000/report/report-item/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/report/report-item/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

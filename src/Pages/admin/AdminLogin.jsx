@@ -18,7 +18,7 @@ function AdminLogin() {
     const data = { email, password };
 
     try {
-      const res = await fetch("http://localhost:5000/admin/login", {
+      const res = await fetch("${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

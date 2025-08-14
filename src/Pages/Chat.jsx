@@ -60,7 +60,7 @@ function Chat({buyerId}) {
             console.log("Fetching username for user:", otherUserId, "| User role:", userRole);
 
             // Use the correct route pattern: /user/:userId
-            const response = await fetch(`http://localhost:5000/auth/user/${otherUserId}`, {
+            const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/auth/user/${otherUserId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -71,7 +71,7 @@ function Chat({buyerId}) {
                 status: response.status,
                 ok: response.ok,
                 statusText: response.statusText,
-                url: `http://localhost:5000/auth/user/${otherUserId}`
+                url: `${import.meta.env.VITE_MAIN_BACKEND_URL}/auth/user/${otherUserId}`
             });
 
             if (response.ok) {
@@ -108,7 +108,7 @@ function Chat({buyerId}) {
 
             console.log("Loading historical messages for item:", productId_state);
             
-            const response = await fetch(`http://localhost:5000/chat/recent/${productId_state}`, {
+            const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/chat/recent/${productId_state}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -213,7 +213,7 @@ function Chat({buyerId}) {
                 // Strategy 1: Try to fetch user info to understand if they're a seller
                 let userResponse;
                 try {
-                    userResponse = await fetch(`http://localhost:5000/user/${userId}`, {
+                    userResponse = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/user/${userId}`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                 } catch (err) {
@@ -227,7 +227,7 @@ function Chat({buyerId}) {
 
                 // First, try param1 as productId (seller pattern: /productId/buyerId)
                 try {
-                    const response = await fetch(`http://localhost:5000/item/${param1}`, {
+                    const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/item/${param1}`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     
@@ -272,7 +272,7 @@ function Chat({buyerId}) {
                 // If not found, try param2 as productId (buyer pattern: /sellerId/productId)
                 if (!itemFound) {
                     try {
-                        const response = await fetch(`http://localhost:5000/item/${param2}`, {
+                        const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/item/${param2}`, {
                             headers: { 'Authorization': `Bearer ${token}` }
                         });
                         
@@ -364,7 +364,7 @@ function Chat({buyerId}) {
         console.log("Setting up socket connection...");
 
         // Establish socket connection
-        const newSocket = io("http://localhost:4001", {
+        const newSocket = io("${import.meta.env.VITE_CHAT_BACKEND_URL}", {
             auth: { token },
             transports: ["websocket", "polling"],
             reconnection: true,

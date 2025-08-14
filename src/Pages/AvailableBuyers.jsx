@@ -44,7 +44,7 @@ function AvailableBuyers() {
             logDebug("Fetch Request Start", { 
                 itemId, 
                 hasToken: !!token,
-                url: `http://localhost:5000/chat/recent/${itemId}`
+                url: `${import.meta.env.VITE_MAIN_BACKEND_URL}/chat/recent/${itemId}`
             });
             
             if (!token) {
@@ -53,7 +53,7 @@ function AvailableBuyers() {
                 return;
             }
             
-            const response = await fetch(`http://localhost:5000/chat/recent/${itemId}`, {
+            const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/chat/recent/${itemId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -143,7 +143,7 @@ function AvailableBuyers() {
             const token = localStorage.getItem("accessToken");
             logDebug("Socket Setup Start", { hasToken: !!token });
             
-            const newSocket = io("http://localhost:4001", {
+            const newSocket = io("${import.meta.env.VITE_CHAT_BACKEND_URL}", {
                 auth: { token }
             });
             
@@ -242,7 +242,7 @@ function AvailableBuyers() {
                     console.log(`Fetching user data for ID: ${buyerId}`);
                     
                     // Use the correct route: /user/:userId
-                    const response = await fetch(`http://localhost:5000/auth/user/${buyerId}`, {
+                    const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/auth/user/${buyerId}`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Content-Type': 'application/json'
@@ -253,7 +253,7 @@ function AvailableBuyers() {
                         status: response.status,
                         ok: response.ok,
                         statusText: response.statusText,
-                        url: `http://localhost:5000/user/${buyerId}`
+                        url: `${import.meta.env.VITE_MAIN_BACKEND_URL}/user/${buyerId}`
                     });
                     
                     if (response.ok) {

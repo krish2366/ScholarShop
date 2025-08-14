@@ -19,7 +19,7 @@ const CategoryProductsPage = () => {
     async function fetchProducts() {
         setLoading(true);
         try {
-            const res = await fetch(`http://localhost:5000/item/get-item-by-category/${selectedCategory}`);
+            const res = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/item/get-item-by-category/${selectedCategory}`);
             if (!res.ok) {
                 throw new Error('Network response was not ok');
             }
