@@ -1,18 +1,10 @@
+// ScholarShop-5/src/Pages/admin/AdminSettings.jsx
 import { useState, useEffect } from 'react';
 import AdminLayout from '../../components/AdminLayout';
 
 const AdminSettings = () => {
   const [settings, setSettings] = useState({
-    maxReportsPerUser: 10,
-    autoVerifyUsers: false,
-    allowGuestBrowsing: true,
     maintenanceMode: false,
-    emailNotifications: true,
-    reportReviewDeadline: 48,
-    itemExpiryDays: 30,
-    maxItemsPerUser: 50,
-    minPasswordLength: 6,
-    enableImageUpload: true,
     maintenanceMessage: 'System is under maintenance. Please try again later.',
     estimatedDowntime: 'Unknown'
   });
@@ -26,7 +18,7 @@ const AdminSettings = () => {
 
   const fetchSettings = async () => {
     try {
-      const response = await fetch('/admin/settings', {
+      const response = await fetch('http://localhost:5000/admin/settings', { // Ensure full URL
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }
@@ -34,9 +26,15 @@ const AdminSettings = () => {
       
       if (response.ok) {
         const data = await response.json();
-        setSettings(data.settings);
+        // Only set the maintenance-related settings
+        setSettings({
+          maintenanceMode: data.settings.maintenanceMode,
+          maintenanceMessage: data.settings.maintenanceMessage,
+          estimatedDowntime: data.settings.estimatedDowntime
+        });
       }
     } catch (error) {
+      console.error('Error fetching settings:', error); // Use console.error for debugging
       alert('Error fetching settings');
     } finally {
       setLoading(false);
@@ -53,28 +51,36 @@ const AdminSettings = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const response = await fetch('/admin/settings', {
+      const response = await fetch('http://localhost:5000/admin/settings', { // Ensure full URL
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         },
-        body: JSON.stringify(settings)
+        // Only send the maintenance-related settings for update
+        body: JSON.stringify({
+          maintenanceMode: settings.maintenanceMode,
+          maintenanceMessage: settings.maintenanceMessage,
+          estimatedDowntime: settings.estimatedDowntime
+        })
       });
 
       if (response.ok) {
         alert('Settings updated successfully');
       } else {
-        alert('Error updating settings');
+        const errorData = await response.json();
+        console.error('Error updating settings:', errorData); // Log error details
+        alert(errorData.message || 'Error updating settings');
       }
     } catch (error) {
+      console.error('Error updating settings:', error); // Log network errors
       alert('Error updating settings');
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <AdminLayout><div className="text-center">Loading...</div></AdminLayout>;
+  if (loading) return <AdminLayout><div className="text-center p-6 text-gray-600">Loading settings...</div></AdminLayout>;
 
   return (
     <AdminLayout>
@@ -90,121 +96,9 @@ const AdminSettings = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* General Settings */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">General Settings</h2>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={settings.autoVerifyUsers}
-                    onChange={(e) => handleSettingChange('autoVerifyUsers', e.target.checked)}
-                    className="mr-2"
-                  />
-                  Auto-verify new users
-                </label>
-              </div>
-
-              <div>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={settings.allowGuestBrowsing}
-                    onChange={(e) => handleSettingChange('allowGuestBrowsing', e.target.checked)}
-                    className="mr-2"
-                  />
-                  Allow guest browsing
-                </label>
-              </div>
-
-              <div>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={settings.emailNotifications}
-                    onChange={(e) => handleSettingChange('emailNotifications', e.target.checked)}
-                    className="mr-2"
-                  />
-                  Email notifications
-                </label>
-              </div>
-
-              <div>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={settings.enableImageUpload}
-                    onChange={(e) => handleSettingChange('enableImageUpload', e.target.checked)}
-                    className="mr-2"
-                  />
-                  Enable image uploads
-                </label>
-              </div>
-            </div>
-          </div>
-
-          {/* Limits & Restrictions */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">Limits & Restrictions</h2>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Max reports per user (daily)</label>
-                <input
-                  type="number"
-                  value={settings.maxReportsPerUser}
-                  onChange={(e) => handleSettingChange('maxReportsPerUser', parseInt(e.target.value))}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Max items per user</label>
-                <input
-                  type="number"
-                  value={settings.maxItemsPerUser}
-                  onChange={(e) => handleSettingChange('maxItemsPerUser', parseInt(e.target.value))}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Minimum password length</label>
-                <input
-                  type="number"
-                  value={settings.minPasswordLength}
-                  onChange={(e) => handleSettingChange('minPasswordLength', parseInt(e.target.value))}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Report review deadline (hours)</label>
-                <input
-                  type="number"
-                  value={settings.reportReviewDeadline}
-                  onChange={(e) => handleSettingChange('reportReviewDeadline', parseInt(e.target.value))}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Item expiry (days)</label>
-                <input
-                  type="number"
-                  value={settings.itemExpiryDays}
-                  onChange={(e) => handleSettingChange('itemExpiryDays', parseInt(e.target.value))}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-            </div>
-          </div>
-
+        <div className="grid grid-cols-1 gap-6"> {/* Simplified grid for only one section */}
           {/* Maintenance Mode */}
-          <div className="bg-white p-6 rounded-lg shadow lg:col-span-2">
+          <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-xl font-semibold mb-4">Maintenance Mode</h2>
             
             <div className="space-y-4">
