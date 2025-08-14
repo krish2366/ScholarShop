@@ -28,7 +28,7 @@ const AdminUsers = () => {
         isVerified: verificationFilter
       });
 
-      const res = await fetch(`http://localhost:5000/admin/users?${params}`, {
+      const res = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/users?${params}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -47,7 +47,7 @@ const AdminUsers = () => {
   const handleVerifyUser = async (userId, isVerified) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await fetch(`http://localhost:5000/admin/users/${userId}/verify`, {
+      const res = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/users/${userId}/verify`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -67,7 +67,7 @@ const AdminUsers = () => {
   const viewUserDetails = async (userId) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await fetch(`http://localhost:5000/admin/users/${userId}`, {
+      const res = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/users/${userId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();

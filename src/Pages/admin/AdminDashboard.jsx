@@ -30,7 +30,7 @@ const AdminDashboard = () => {
   const fetchAdminProfile = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await fetch('http://localhost:5000/admin/profile', {
+      const res = await fetch('${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/profile', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -50,9 +50,9 @@ const AdminDashboard = () => {
       const headers = { Authorization: `Bearer ${token}` };
 
       const [userRes, itemRes, activityRes] = await Promise.all([
-        fetch('http://localhost:5000/admin/analytics/users', { headers }),
-        fetch('http://localhost:5000/admin/analytics/items', { headers }),
-        fetch('http://localhost:5000/admin/analytics/activity', { headers })
+        fetch('${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/analytics/users', { headers }),
+        fetch('${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/analytics/items', { headers }),
+        fetch('${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/analytics/activity', { headers })
       ]);
 
       const [userData, itemData, activityData] = await Promise.all([
