@@ -31,7 +31,7 @@ const AdminItems = () => {
         category: categoryFilter
       });
 
-      const res = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/items?${params}`, {
+      const res = await fetch(`/api/admin/items?${params}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -52,7 +52,7 @@ const AdminItems = () => {
     
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/items/${itemToBan}/ban`, {
+      const res = await fetch(`/api/admin/items/${itemToBan}/ban`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -75,7 +75,7 @@ const AdminItems = () => {
   const handleUnbanItem = async (itemId) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/items/${itemId}/unban`, {
+      const res = await fetch(`/api/admin/items/${itemId}/unban`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -93,7 +93,7 @@ const AdminItems = () => {
     
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/items/${itemId}`, {
+      const res = await fetch(`/api/admin/items/${itemId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

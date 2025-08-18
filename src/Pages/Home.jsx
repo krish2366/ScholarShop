@@ -14,7 +14,7 @@ const Home = () => {
   const [isLoggedIn] = useState(!!localStorage.getItem("accessToken"));
 
   useEffect(() => {
-    fetch("${import.meta.env.VITE_MAIN_BACKEND_URL}/item/get-all-items")
+    fetch("/api/item/get-all-items")
       .then((res) => res.json())
       .then((data) => {
         console.log("API response:", data);

@@ -60,7 +60,7 @@ function Chat({buyerId}) {
             console.log("Fetching username for user:", otherUserId, "| User role:", userRole);
 
             // Use the correct route pattern: /user/:userId
-            const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/auth/user/${otherUserId}`, {
+            const response = await fetch(`/api/auth/user/${otherUserId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -71,7 +71,7 @@ function Chat({buyerId}) {
                 status: response.status,
                 ok: response.ok,
                 statusText: response.statusText,
-                url: `${import.meta.env.VITE_MAIN_BACKEND_URL}/auth/user/${otherUserId}`
+                url: `/api/auth/user/${otherUserId}`
             });
 
             if (response.ok) {
@@ -105,73 +105,54 @@ function Chat({buyerId}) {
         try {
             const token = localStorage.getItem("accessToken");
             if (!token || !productId_state) return;
-
+    
             console.log("Loading historical messages for item:", productId_state);
             
-            const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/chat/recent/${productId_state}`, {
+            const response = await fetch(`/api/chat/recent/${productId_state}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
-
+    
             if (response.ok) {
                 const historicalChats = await response.json();
                 console.log("Historical messages loaded:", historicalChats);
                 
-                // Parse all IDs to numbers for consistent comparison
                 const currentUserId = parseInt(userId);
+                const sellerId = parseInt(itemInfo?.sellerId || itemInfo?.userId);
                 const buyerUserId = parseInt(actualBuyerId_state);
                 
                 console.log("Filtering parameters:", {
                     currentUserId,
+                    sellerId,
                     buyerUserId,
-                    userRole,
-                    productId_state
+                    userRole
                 });
-
-                // Simplified filtering: get messages between the two participants for this item
+    
+                // Improved filtering logic
                 const conversationMessages = historicalChats.filter(chat => {
                     const chatUserId = parseInt(chat.userId);
-                    
-                    console.log(`Processing chat ${chat.id}:`, {
-                        chatUserId,
-                        currentUserId,
-                        buyerUserId,
-                        userRole
-                    });
-                    
-                    // For this conversation, we want messages from either participant
-                    // Seller (currentUserId = 1) wants messages from buyer (buyerUserId = 3) AND their own messages
-                    // Buyer (currentUserId = 3) wants messages from seller (1) AND their own messages
-                    
                     let shouldInclude = false;
                     
                     if (userRole === 'buyer') {
-                        // Buyer sees: their own messages + seller's messages
-                        shouldInclude = (chatUserId === currentUserId) ; // 1 is seller ID
-                        console.log(`Buyer filter for chat ${chat.id}:`, {
-                            isOwnMessage: chatUserId === currentUserId,
-                            isSellerMessage: chatUserId === 1,
-                            shouldInclude
-                        });
+                        // Show messages from both the buyer and seller
+                        shouldInclude = (chatUserId === currentUserId) || (chatUserId === sellerId);
                     } else {
-                        // Seller sees: their own messages + specific buyer's messages
+                        // Show messages from both the seller and specific buyer
                         shouldInclude = (chatUserId === currentUserId) || (chatUserId === buyerUserId);
-                        console.log(`Seller filter for chat ${chat.id}:`, {
-                            isOwnMessage: chatUserId === currentUserId,
-                            isBuyerMessage: chatUserId === buyerUserId,
-                            shouldInclude
-                        });
                     }
+                    
+                    console.log(`Processing message from ${chatUserId}:`, {
+                        isIncluded: shouldInclude,
+                        message: chat.message?.substring(0, 30)
+                    });
                     
                     return shouldInclude;
                 });
-
-                console.log("Filtered conversation messages:", conversationMessages);
-
-                // Convert to consistent message format with parsed IDs
+    
+                // Convert to consistent message format
                 const formattedMessages = conversationMessages.map(chat => ({
                     id: chat.id,
                     message: chat.message,
@@ -180,8 +161,8 @@ function Chat({buyerId}) {
                     timestamp: chat.timestamp || chat.createdAt,
                     roomId: `${productId_state}-${actualBuyerId_state}`
                 }));
-
-                console.log("Formatted historical messages:", formattedMessages);
+    
+                console.log("Final formatted messages:", formattedMessages);
                 setMessages(formattedMessages);
                 
                 // Scroll to bottom after loading messages
@@ -213,7 +194,7 @@ function Chat({buyerId}) {
                 // Strategy 1: Try to fetch user info to understand if they're a seller
                 let userResponse;
                 try {
-                    userResponse = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/user/${userId}`, {
+                    userResponse = await fetch(`/api/user/${userId}`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                 } catch (err) {
@@ -227,7 +208,7 @@ function Chat({buyerId}) {
 
                 // First, try param1 as productId (seller pattern: /productId/buyerId)
                 try {
-                    const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/item/${param1}`, {
+                    const response = await fetch(`/api/item/${param1}`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     
@@ -272,7 +253,7 @@ function Chat({buyerId}) {
                 // If not found, try param2 as productId (buyer pattern: /sellerId/productId)
                 if (!itemFound) {
                     try {
-                        const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/item/${param2}`, {
+                        const response = await fetch(`/api/item/${param2}`, {
                             headers: { 'Authorization': `Bearer ${token}` }
                         });
                         
@@ -364,7 +345,7 @@ function Chat({buyerId}) {
         console.log("Setting up socket connection...");
 
         // Establish socket connection
-        const newSocket = io("${import.meta.env.VITE_CHAT_BACKEND_URL}", {
+        const newSocket = io(import.meta.env.VITE_CHAT_BACKEND_URL, {
             auth: { token },
             transports: ["websocket", "polling"],
             reconnection: true,

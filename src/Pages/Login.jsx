@@ -26,7 +26,7 @@ function Login() {
     };
 
     try {
-      const res = await fetch("${import.meta.env.VITE_MAIN_BACKEND_URL}/auth/login", {
+      const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,7 +70,7 @@ function Login() {
           </h2>
           <button
             className="w-full bg-white font-semibold rounded-lg p-2 mt-4 flex items-center justify-center gap-4 shadow-md"
-            onClick={() => window.location.href = "${import.meta.env.VITE_MAIN_BACKEND_URL}/auth/google"}
+            onClick={() => window.location.href = "/api/auth/google"}
           >
             <img src={google} alt="google" className="h-6" />
             <span className="text-[#333333]">Login with Google</span>
