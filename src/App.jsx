@@ -23,7 +23,7 @@ import AdminSettings from './Pages/admin/AdminSettings.jsx';
 import AdminReports from './Pages/admin/AdminReports.jsx';
 import AdminNotifications from './Pages/admin/AdminNotifications.jsx';
 import AdminAuditLogs from './Pages/admin/AdminAuditLogs.jsx';
-import AdminProtectedRoute from './components/AdminProtectedRoute.jsx';
+import AdminProtectedRoute from './Components/AdminProtectedRoute.jsx';
 import MaintenancePage from './Pages/MaintenancePage.jsx';
 
 function App() {
