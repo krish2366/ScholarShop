@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import camera from "../assets/camera.svg";
-import Navbar from "../Components/Navbar";
+import Navbar from "../Components/Navbar.jsx";
 
 const Post = () => {
   const navigate = useNavigate();

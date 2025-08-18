@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Navbar from "../Components/Navbar";
+import Navbar from "../Components/Navbar.jsx";
 import camera from "../assets/camera.svg";
 
 function UpdateItem() {

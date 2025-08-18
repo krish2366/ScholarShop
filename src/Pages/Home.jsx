@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Navbar from "../Components/Navbar";
+import Navbar from "../Components/Navbar.jsx";
 import essentials from "../assets/essentials.webp";
 import Instruments from "../assets/instrument.jpg";
 import herosection from "../assets/herosection.jpg";
-import Footer from "../Components/Footer";
+import Footer from "../Components/Footer.jsx";
 import { ArrowRight, ShoppingBag, Users, Shield, Star } from 'lucide-react';
 
 const Home = () => {
@@ -139,7 +139,7 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="w-full lg:w-2/5 lg:h-[23rem]">
+            <div className="w-full lg:w-2/5 lg:h-[23rem] hidden lg:block">
               <img src={herosection} className="bg-gray-200 w-full h-full rounded-xl rounded-s-none" />
             </div>
           </div>

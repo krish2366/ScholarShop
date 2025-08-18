@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Navbar from "../Components/Navbar";
-import follow from "../assets/follow.svg";
-import Heart from "../assets/Heart.svg";
-import redHeart from "../assets/redHeart.svg";
+import Navbar from "../Components/Navbar.jsx";
 import camera from "../assets/camera.svg";
 
 const Profile = () => {

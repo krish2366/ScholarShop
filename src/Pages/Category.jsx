@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, Filter, Grid, List } from 'lucide-react';
 import { useParams } from 'react-router-dom';
-import Navbar from '../Components/Navbar';
+import Navbar from '../Components/Navbar.jsx';
 
 const CategoryProductsPage = () => {
   const [products, setProducts] = useState([]);

@@ -1,30 +1,30 @@
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from './Pages/Home'
-import Login from './Pages/Login'
-import Post from './Pages/Post'
-import Signup from './Pages/Signup'
-import Profile from './Pages/Profile'
-import Item from './Pages/Item';
-import Chat from './Pages/Chat';
-import AvailableBuyers from './Pages/AvailableBuyers';
+import Home from './Pages/Home.jsx'
+import Login from './Pages/Login.jsx'
+import Post from './Pages/Post.jsx'
+import Signup from './Pages/Signup.jsx'
+import Profile from './Pages/Profile.jsx'
+import Item from './Pages/Item.jsx';
+import Chat from './Pages/Chat.jsx';
+import AvailableBuyers from './Pages/AvailableBuyers.jsx';
 import { useState } from 'react';
-import UpdateItem from './Pages/UpdateItem';
-import CategoryProductsPage from './Pages/Category';
-import AboutUs from './Pages/AboutUs'; 
-import AuthSuccess from "./Pages/AuthSuccess";
-import FeedbackPage from './Pages/Feedback';
-import AdminLogin from './Pages/admin/AdminLogin';
-import AdminDashboard from './Pages/admin/AdminDashboard';
-import AdminUsers from './Pages/admin/AdminUsers';
-import AdminItems from './Pages/admin/AdminItems';
-import AdminAnalytics from './Pages/admin/AdminAnalytics';
-import AdminSettings from './Pages/admin/AdminSettings';
-import AdminReports from './Pages/admin/AdminReports';
-import AdminNotifications from './Pages/admin/AdminNotifications';
-import AdminAuditLogs from './Pages/admin/AdminAuditLogs';
-import AdminProtectedRoute from './components/AdminProtectedRoute';
-import MaintenancePage from './Pages/MaintenancePage';
+import UpdateItem from './Pages/UpdateItem.jsx';
+import CategoryProductsPage from './Pages/Category.jsx';
+import AboutUs from './Pages/AboutUs.jsx'; 
+import AuthSuccess from "./Pages/AuthSuccess.jsx";
+import FeedbackPage from './Pages/Feedback.jsx';
+import AdminLogin from './Pages/admin/AdminLogin.jsx';
+import AdminDashboard from './Pages/admin/AdminDashboard.jsx';
+import AdminUsers from './Pages/admin/AdminUsers.jsx';
+import AdminItems from './Pages/admin/AdminItems.jsx';
+import AdminAnalytics from './Pages/admin/AdminAnalytics.jsx';
+import AdminSettings from './Pages/admin/AdminSettings.jsx';
+import AdminReports from './Pages/admin/AdminReports.jsx';
+import AdminNotifications from './Pages/admin/AdminNotifications.jsx';
+import AdminAuditLogs from './Pages/admin/AdminAuditLogs.jsx';
+import AdminProtectedRoute from './components/AdminProtectedRoute.jsx';
+import MaintenancePage from './Pages/MaintenancePage.jsx';
 
 function App() {
 

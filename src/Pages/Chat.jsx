@@ -131,25 +131,35 @@ function Chat({buyerId}) {
                     userRole
                 });
     
-                // Improved filtering logic
+                // FIXED FILTERING LOGIC
                 const conversationMessages = historicalChats.filter(chat => {
                     const chatUserId = parseInt(chat.userId);
-                    let shouldInclude = false;
+                    const chatReceiverId = parseInt(chat.recieverId);
                     
                     if (userRole === 'buyer') {
-                        // Show messages from both the buyer and seller
-                        shouldInclude = (chatUserId === currentUserId) || (chatUserId === sellerId);
-                    } else {
-                        // Show messages from both the seller and specific buyer
-                        shouldInclude = (chatUserId === currentUserId) || (chatUserId === buyerUserId);
+                        
+                        const sellerId = parseInt(itemInfo?.sellerId || itemInfo?.userId);
+                        
+                        return (
+                            
+                            (chatUserId === currentUserId && chatReceiverId === sellerId) ||
+                           
+                            (chatUserId === sellerId && (chatReceiverId === currentUserId || chatReceiverId === sellerId))
+                        );
+                    } 
+                    else if (userRole === 'seller') {
+                     
+                        const buyerUserId = parseInt(actualBuyerId_state);
+                        
+                        return (
+                          
+                            (chatUserId === currentUserId && chatReceiverId === buyerUserId) ||
+                          
+                            (chatUserId === buyerUserId && chatReceiverId === currentUserId)
+                        );
                     }
                     
-                    console.log(`Processing message from ${chatUserId}:`, {
-                        isIncluded: shouldInclude,
-                        message: chat.message?.substring(0, 30)
-                    });
-                    
-                    return shouldInclude;
+                    return false;
                 });
     
                 // Convert to consistent message format
@@ -163,6 +173,12 @@ function Chat({buyerId}) {
                 }));
     
                 console.log("Final formatted messages:", formattedMessages);
+                
+                // If no messages found between current buyer and seller, show empty chat
+                if (formattedMessages.length === 0) {
+                    console.log("No messages found between current buyer and seller - starting fresh conversation");
+                }
+                
                 setMessages(formattedMessages);
                 
                 // Scroll to bottom after loading messages

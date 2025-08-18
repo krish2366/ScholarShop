@@ -1,6 +1,6 @@
 import { Mail, Phone, MapPin, Users, Target, Heart } from "lucide-react";
-import Navbar from "../Components/Navbar";
-import Footer from "../Components/Footer";
+import Navbar from "../Components/Navbar.jsx";
+import Footer from "../Components/Footer.jsx";
 import aashi from "../assets/aashi.jpeg";
 import krish from "../assets/krish.jpeg";
 import aryan from "../assets/aryan.jpeg";

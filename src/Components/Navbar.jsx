@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import logo from "../assets/logo1.svg";
 import { HomeIcon, UserCircleIcon} from "@heroicons/react/24/outline";
-import CollapsableNavbar from "./CollapsableNavbar";
+import CollapsableNavbar from "./CollapsableNavbar.jsx";
 
 function Navbar() {
   return (

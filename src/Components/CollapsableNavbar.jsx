@@ -1,10 +1,5 @@
 import { useState } from "react";
 import logo from "../assets/logo1.svg";
-import home from "../assets/Right.svg";
-import user from "../assets/user.svg";
-import abtus from "../assets/users.svg";
-import feedback from "../assets/write.svg";
-import logout from "../assets/logout.svg";
 import { Bars3Icon } from "@heroicons/react/24/solid";
 import { HomeIcon, LogOutIcon, PenLineIcon, User2, UsersRound } from "lucide-react"
 import { Link } from "react-router-dom";

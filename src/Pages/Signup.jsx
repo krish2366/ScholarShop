@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import supimg from "../assets/signup.svg";
 import google from "../assets/google_logo.svg";
-import Navbar from "../Components/Navbar"; 
+import Navbar from "../Components/Navbar.jsx"; 
 
 
 function Signup() {

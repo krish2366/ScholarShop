@@ -9,8 +9,8 @@ import {
   FaCog
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import AdminSidebar from './AdminSidebar';
-import AdminHeader from './AdminHeader';
+import AdminSidebar from './AdminSidebar.jsx';
+import AdminHeader from './AdminHeader.jsx';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -182,7 +182,7 @@ const AdminDashboard = () => {
                 <div
                   key={action.title}
                   onClick={() => navigate(action.path)}
-                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer hover:scale-105 active:scale-95 transform transition-transform duration-200"
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md cursor-pointer hover:scale-105 active:scale-95 transform transition-transform duration-200"
                 >
                   <div className={`p-3 rounded-lg bg-gradient-to-r ${action.color} w-fit mb-4`}>
                     <action.icon className="text-white text-lg" />

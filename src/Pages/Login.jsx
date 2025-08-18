@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Navbar from "../Components/Navbar";
+import Navbar from "../Components/Navbar.jsx";
 import lginimg from "../assets/login.svg";
 import google from "../assets/google_logo.svg";
 import { useNavigate, Link } from "react-router-dom";

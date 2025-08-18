@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { FaUsers, FaBox, FaChartLine, FaCalendarAlt } from 'react-icons/fa';
-import AdminSidebar from './AdminSidebar';
-import AdminHeader from './AdminHeader';
+import AdminSidebar from './AdminSidebar.jsx';
+import AdminHeader from './AdminHeader.jsx';
 
 const AdminAnalytics = () => {
   const [analytics, setAnalytics] = useState({

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Star, Send, MessageCircle, Heart, ThumbsUp, Award } from 'lucide-react';
-import Navbar from '../Components/Navbar';
+import Navbar from '../Components/Navbar.jsx';
 
 const FeedbackPage = () => {
   const [rating, setRating] = useState(0);

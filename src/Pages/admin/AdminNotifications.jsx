@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import AdminLayout from '../../components/AdminLayout';
+import AdminLayout from '../../components/AdminLayout.jsx';
 import { FaBell, FaTrash, FaEye, FaPlus } from 'react-icons/fa';
 
 const AdminNotifications = () => {

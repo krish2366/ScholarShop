@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { FaSearch, FaEye, FaCheckCircle, FaTimesCircle, FaFilter } from 'react-icons/fa';
-import AdminSidebar from './AdminSidebar';
-import AdminHeader from './AdminHeader';
+import AdminSidebar from './AdminSidebar.jsx';
+import AdminHeader from './AdminHeader.jsx';
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
