@@ -25,7 +25,7 @@ function UpdateItem() {
       return;
     }
 
-    fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/item/get-item-details/${itemId}`, {
+    fetch(`/api/item/get-item-details/${itemId}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -80,7 +80,7 @@ function UpdateItem() {
     photos.forEach((photo) => formData.append("images", photo)); // Changed from "photos" to "images"
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/item/update-item/${itemId}`, {
+      const res = await fetch(`/api/item/update-item/${itemId}`, {
         method: "PUT", 
         headers: { Authorization: `Bearer ${token}` },
         body: formData,

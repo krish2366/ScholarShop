@@ -43,7 +43,7 @@ function Signup() {
       }
 
       try {
-        const res = await fetch("${import.meta.env.VITE_MAIN_BACKEND_URL}/auth/register",{
+        const res = await fetch("/api/auth/register",{
           method: "POST",
           headers:{
             "Content-Type" : "application/json"
@@ -173,7 +173,7 @@ function Signup() {
           <div className="flex flex-col items-center">
             <button
               className="w-full bg-white font-semibold rounded-lg p-2 mt-4 flex items-center justify-center gap-4 shadow-md"
-              onClick={() => window.location.href = "${import.meta.env.VITE_MAIN_BACKEND_URL}/auth/google"} // Ensure backend URL matches
+              onClick={() => window.location.href = "/api/auth/google"} // Ensure backend URL matches
             >
               {/* Removed google image as the file does not exist */}
               <img src={google} alt="google" className="h-6" />

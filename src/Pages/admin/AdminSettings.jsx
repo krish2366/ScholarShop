@@ -18,7 +18,7 @@ const AdminSettings = () => {
 
   const fetchSettings = async () => {
     try {
-      const response = await fetch('${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/settings', { // Ensure full URL
+      const response = await fetch('/api/admin/settings', { // Ensure full URL
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }
@@ -51,7 +51,7 @@ const AdminSettings = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const response = await fetch('${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/settings', { // Ensure full URL
+      const response = await fetch('/api/admin/settings', { // Ensure full URL
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
