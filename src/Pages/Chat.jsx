@@ -568,10 +568,10 @@ function Chat({buyerId}) {
     }
 
     return (
-        <section className="bg-[#FFF4DC] h-screen">
+        <section className=" h-screen">
             <Navbar />
-            <section>
-                <h1 className="text-center text-3xl font-bold m-6">
+            <section className="bg-[#FFF4DC] pb-5" >
+                <h1 className="text-center text-3xl font-bold m-6 mt-0 pt-6">
                     Chat Section
                     {itemInfo && <span className="block text-lg font-normal mt-2">Item: {itemInfo.title}</span>}
                     <span className="block text-sm font-normal text-gray-600">
