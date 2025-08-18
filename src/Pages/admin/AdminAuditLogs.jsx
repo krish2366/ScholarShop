@@ -1,6 +1,6 @@
 // ScholarShop-5/src/Pages/admin/AdminAuditLogs.jsx
 import { useState, useEffect } from 'react';
-import AdminLayout from '../../components/AdminLayout.jsx';
+import AdminLayout from '../../Components/AdminLayout.jsx';
 import { FaSearch, FaFilter, FaEye, FaDownload, FaCalendarAlt } from 'react-icons/fa';
 
 const AdminAuditLogs = () => {

@@ -1,6 +1,6 @@
 // ScholarShop-5/src/Pages/admin/AdminSettings.jsx
 import { useState, useEffect } from 'react';
-import AdminLayout from '../../components/AdminLayout.jsx';
+import AdminLayout from '../../Components/AdminLayout.jsx';
 
 const AdminSettings = () => {
   const [settings, setSettings] = useState({
