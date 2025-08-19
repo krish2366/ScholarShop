@@ -133,33 +133,24 @@ function Chat({buyerId}) {
     
                 // FIXED FILTERING LOGIC
                 const conversationMessages = historicalChats.filter(chat => {
+                    const sellerId = parseInt(itemInfo?.sellerId || itemInfo?.userId);
+                    const buyerUserId = parseInt(actualBuyerId_state);
                     const chatUserId = parseInt(chat.userId);
                     const chatReceiverId = parseInt(chat.recieverId);
-                    
-                    if (userRole === 'buyer') {
-                        
-                        const sellerId = parseInt(itemInfo?.sellerId || itemInfo?.userId);
-                        
-                        return (
-                            
-                            (chatUserId === currentUserId && chatReceiverId === sellerId) ||
-                           
-                            (chatUserId === sellerId && (chatReceiverId === currentUserId || chatReceiverId === sellerId))
-                        );
-                    } 
-                    else if (userRole === 'seller') {
-                     
-                        const buyerUserId = parseInt(actualBuyerId_state);
-                        
-                        return (
-                          
-                            (chatUserId === currentUserId && chatReceiverId === buyerUserId) ||
-                          
-                            (chatUserId === buyerUserId && chatReceiverId === currentUserId)
-                        );
-                    }
-                    
-                    return false;
+                
+                    // Condition 1: Message is directly between the current buyer and seller (works for new, correct data)
+                    const isDirectConversation = 
+                        (chatUserId === buyerUserId && chatReceiverId === sellerId) ||
+                        (chatUserId === sellerId && chatReceiverId === buyerUserId);
+                
+                    // Condition 2: Message is from the buyer to the seller (covers all buyer messages)
+                    const isFromThisBuyer = chatUserId === buyerUserId && chatReceiverId === sellerId;
+                
+                    // Condition 3: Message is from the seller to themselves (handles old, incorrect data)
+                    // We can reasonably assume these messages belong to the current open conversation.
+                    const isOldSellerMessage = chatUserId === sellerId && chatReceiverId === sellerId;
+                
+                    return isDirectConversation || isFromThisBuyer || isOldSellerMessage;
                 });
     
                 // Convert to consistent message format
@@ -663,23 +654,23 @@ function Chat({buyerId}) {
                         )}
                     </div>
 
-                    <form className="h-[10%] mt-5 flex justify-between items-center" onSubmit={sendMessage}>
-                        <input
-                            type="text"
-                            placeholder="Type a message..."
-                            className="w-[90%] p-2 border-2 border-gray-500 rounded-lg"
-                            value={messageInput}
-                            onChange={(e) => setMessageInput(e.target.value)}
-                            disabled={!socket || !roomId}
-                        />
-                        <button
-                            type="submit"
-                            disabled={!socket || !roomId || !messageInput.trim()}
-                            className="bg-blue-500 text-white p-2 rounded-lg w-[9%] hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                        >
-                            Send
-                        </button>
-                    </form>
+                    <form className="h-[10%] mt-5 flex items-center gap-3" onSubmit={sendMessage}>
+            <input
+        type="text"
+        placeholder="Type a message..."
+        className="flex-1 p-2 border-2 border-gray-500 rounded-lg"
+        value={messageInput}
+        onChange={(e) => setMessageInput(e.target.value)}
+        disabled={!socket || !roomId}
+    />
+    <button
+        type="submit"
+        disabled={!socket || !roomId || !messageInput.trim()}
+        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 disabled:bg-gray-400"
+    >
+        Send
+    </button>
+</form>
                 </div>
             </section>
         </section>

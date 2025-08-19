@@ -106,10 +106,10 @@ const Home = () => {
       <Navbar />
       <section className="min-h-screen bg-[#FFF4DC]">
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-10 py-12 lg:py-24">
+        <div className="container mx-auto px-4 py-8 sm:px-6 md:py-12 lg:px-10 lg:py-16">
           <div className="flex flex-col lg:flex-row items-center justify-between  transform hover:scale-[1.02] transition-transform duration-300">
 
-            <div className="w-full lg:w-3/5 bg-white p-8 lg:p-12 rounded-2xl lg:rounded-r-none shadow-2xl ">
+            <div className="w-full text-center lg:text-left lg:w-3/5 bg-white p-6 sm:p-8 lg:p-12 rounded-2xl lg:rounded-r-none shadow-2xl">
 
               <div className="text-center space-y-6">
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#F47C26] leading-tight">

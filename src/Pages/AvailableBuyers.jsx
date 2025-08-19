@@ -143,7 +143,7 @@ function AvailableBuyers() {
             const token = localStorage.getItem("accessToken");
             logDebug("Socket Setup Start", { hasToken: !!token });
             
-            const newSocket = io("${import.meta.env.VITE_CHAT_BACKEND_URL}", {
+            const newSocket = io(import.meta.env.VITE_CHAT_BACKEND_URL, {
                 auth: { token }
             });
             
