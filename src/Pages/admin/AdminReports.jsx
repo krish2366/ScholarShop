@@ -19,7 +19,7 @@ const AdminReports = () => {
   const fetchReports = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/admin/reports?status=${filter}`, { // Corrected URL prefix
+      const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/reports?status=${filter}`, { // Corrected URL prefix
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }
@@ -51,18 +51,18 @@ const AdminReports = () => {
 
     // Map frontend action types to backend endpoints and parameters
     if (selectedReport.actionType === 'approve') {
-      endpoint = `/api/admin/reports/${selectedReport.id}/resolve`;
+      endpoint = `${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/reports/${selectedReport.id}/resolve`;
       body.action = 'none'; // 'Approved' means report is resolved, no specific adverse action
     } else if (selectedReport.actionType === 'reject') {
-      endpoint = `/api/admin/reports/${selectedReport.id}/dismiss`;
+      endpoint = `${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/reports/${selectedReport.id}/dismiss`;
     } else if (selectedReport.actionType === 'ban_item') {
-      endpoint = `/api/admin/reports/${selectedReport.id}/resolve`;
+      endpoint = `${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/reports/${selectedReport.id}/resolve`;
       body.action = 'item_banned';
     } else if (selectedReport.actionType === 'warn_user') {
-        endpoint = `/api/admin/reports/${selectedReport.id}/resolve`;
+        endpoint = `${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/reports/${selectedReport.id}/resolve`;
         body.action = 'user_warned';
     } else if (selectedReport.actionType === 'ban_user') {
-        endpoint = `/api/admin/reports/${selectedReport.id}/resolve`;
+        endpoint = `${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/reports/${selectedReport.id}/resolve`;
         body.action = 'user_banned';
     } else {
       console.error('Unknown action type:', selectedReport.actionType);

@@ -11,7 +11,7 @@ const AdminHeader = () => {
   const fetchAdminProfile = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await fetch('/api/admin/profile', {
+      const res = await fetch(`'${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/profile`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

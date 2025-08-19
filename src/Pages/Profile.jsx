@@ -14,7 +14,7 @@ const Profile = () => {
       const token = localStorage.getItem("accessToken");
 
       try {
-        const res = await fetch("/api/profile/get-profile",{
+        const res = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/profile/get-profile`,{
           method: "GET",
           headers:{
             Authorization: `Bearer ${token}`
@@ -61,7 +61,7 @@ const Profile = () => {
         return;
       }
 
-      const response = await fetch(`/api/profile/update-profile-picture/${userId}`, {
+      const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/profile/update-profile-picture/${userId}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`

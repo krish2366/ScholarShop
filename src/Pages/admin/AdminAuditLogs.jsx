@@ -47,7 +47,7 @@ const AdminAuditLogs = () => {
         limit: 50 // You can add pagination controls later
       });
 
-      const response = await fetch(`/api/admin/audit-logs?${params.toString()}`, { // Ensure full URL
+      const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/audit-logs?${params.toString()}`, { // Ensure full URL
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }

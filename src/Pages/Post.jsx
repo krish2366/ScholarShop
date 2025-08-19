@@ -63,7 +63,7 @@ const Post = () => {
       };
       console.log("Request headers:", headers);
 
-      const res = await fetch("/api/item/add-item", {
+      const res = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/item/add-item`, {
         method: "POST",
         headers,
         body: formData,

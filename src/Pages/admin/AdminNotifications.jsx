@@ -19,7 +19,7 @@ const AdminNotifications = () => {
 
   const fetchNotifications = async () => {
     try {
-      const response = await fetch('/api/admin/notifications', {
+      const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/notifications`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }
@@ -38,7 +38,7 @@ const AdminNotifications = () => {
 
   const handleCreateNotification = async () => {
     try {
-      const response = await fetch('/api/admin/notifications', {
+      const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/notifications`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ const AdminNotifications = () => {
     if (!confirm('Are you sure you want to delete this notification?')) return;
 
     try {
-      const response = await fetch(`/api/admin/notifications/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/notifications/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
