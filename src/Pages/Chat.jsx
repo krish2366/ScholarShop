@@ -100,61 +100,24 @@ function Chat({buyerId}) {
         }
     }, [userRole, itemInfo, actualBuyerId_state, isLoading]);
 
-    // Load historical messages from HTTP endpoint
     const loadHistoricalMessages = async () => {
         try {
             const token = localStorage.getItem("accessToken");
-            if (!token || !productId_state) return;
+            if (!token || !productId_state || !actualBuyerId_state) return;
     
-            console.log("Loading historical messages for item:", productId_state);
+            console.log(`Loading history for item: ${productId_state}, buyer: ${actualBuyerId_state}`);
             
-            const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/chat/recent/${productId_state}`, {
+            // Corrected URL:
+            const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/chat/conversation/${productId_state}/${actualBuyerId_state}`, {
                 method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Authorization': `Bearer ${token}` }
             });
     
             if (response.ok) {
                 const historicalChats = await response.json();
-                console.log("Historical messages loaded:", historicalChats);
+                console.log("Filtered historical messages loaded from backend:", historicalChats);
                 
-                const currentUserId = parseInt(userId);
-                const sellerId = parseInt(itemInfo?.sellerId || itemInfo?.userId);
-                const buyerUserId = parseInt(actualBuyerId_state);
-                
-                console.log("Filtering parameters:", {
-                    currentUserId,
-                    sellerId,
-                    buyerUserId,
-                    userRole
-                });
-    
-                // FIXED FILTERING LOGIC
-                const conversationMessages = historicalChats.filter(chat => {
-                    const sellerId = parseInt(itemInfo?.sellerId || itemInfo?.userId);
-                    const buyerUserId = parseInt(actualBuyerId_state);
-                    const chatUserId = parseInt(chat.userId);
-                    const chatReceiverId = parseInt(chat.recieverId);
-                
-                    // Condition 1: Message is directly between the current buyer and seller (works for new, correct data)
-                    const isDirectConversation = 
-                        (chatUserId === buyerUserId && chatReceiverId === sellerId) ||
-                        (chatUserId === sellerId && chatReceiverId === buyerUserId);
-                
-                    // Condition 2: Message is from the buyer to the seller (covers all buyer messages)
-                    const isFromThisBuyer = chatUserId === buyerUserId && chatReceiverId === sellerId;
-                
-                    // Condition 3: Message is from the seller to themselves (handles old, incorrect data)
-                    // We can reasonably assume these messages belong to the current open conversation.
-                    const isOldSellerMessage = chatUserId === sellerId && chatReceiverId === sellerId;
-                
-                    return isDirectConversation || isFromThisBuyer || isOldSellerMessage;
-                });
-    
-                // Convert to consistent message format
-                const formattedMessages = conversationMessages.map(chat => ({
+                const formattedMessages = historicalChats.map(chat => ({
                     id: chat.id,
                     message: chat.message,
                     senderId: parseInt(chat.userId),
@@ -164,15 +127,9 @@ function Chat({buyerId}) {
                 }));
     
                 console.log("Final formatted messages:", formattedMessages);
-                
-                // If no messages found between current buyer and seller, show empty chat
-                if (formattedMessages.length === 0) {
-                    console.log("No messages found between current buyer and seller - starting fresh conversation");
-                }
-                
                 setMessages(formattedMessages);
                 
-                // Scroll to bottom after loading messages
+                // Scroll to bottom
                 setTimeout(() => {
                     if (chatBoxRef.current) {
                         chatBoxRef.current.scrollTo(0, chatBoxRef.current.scrollHeight);
