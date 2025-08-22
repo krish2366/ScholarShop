@@ -41,10 +41,12 @@ function AvailableBuyers() {
     const fetchRecentChatsHTTP = async () => {
         try {
             const token = localStorage.getItem("accessToken");
+            const url = `${import.meta.env.VITE_MAIN_BACKEND_URL}/chat/item-chats/${itemId}`;
+
             logDebug("Fetch Request Start", { 
                 itemId, 
                 hasToken: !!token,
-                url: `${import.meta.env.VITE_MAIN_BACKEND_URL}/chat/recent/${itemId}`
+                url: url
             });
             
             if (!token) {
@@ -53,7 +55,7 @@ function AvailableBuyers() {
                 return;
             }
             
-            const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/chat/recent/${itemId}`, {
+            const response = await fetch(url, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -71,7 +73,6 @@ function AvailableBuyers() {
                 const chats = await response.json();
                 logDebug("Raw Chats Data", chats);
                 
-                // Validate the chats data structure
                 if (!Array.isArray(chats)) {
                     logDebug("Invalid Data Format", "Chats is not an array");
                     setLoading(false);
@@ -80,45 +81,23 @@ function AvailableBuyers() {
                 
                 setRecentChats(chats);
                 
-                // Process chats to get unique buyers (excluding current user)
                 const currentUserId = parseInt(userId);
                 logDebug("Processing Chats", { 
                     currentUserId, 
                     totalChats: chats.length,
-                    chatsData: chats.map(c => ({ 
-                        id: c.id, 
-                        userId: c.userId, 
-                        message: c.message?.substring(0, 20) + '...' 
-                    }))
                 });
                 
-                // Get unique user IDs who have chatted (excluding current user)
                 const uniqueUserIds = [...new Set(
-                    chats
-                        .filter(chat => {
-                            const chatUserId = parseInt(chat.userId);
-                            const isNotCurrentUser = chatUserId !== currentUserId;
-                            logDebug(`Filter Chat ${chat.id}`, { 
-                                chatUserId, 
-                                currentUserId, 
-                                isNotCurrentUser 
-                            });
-                            return isNotCurrentUser;
-                        })
-                        .map(chat => parseInt(chat.userId))
+                    chats.flatMap(chat => [chat.userId, chat.recieverId])
+                         .filter(id => id !== currentUserId)
                 )];
                 
                 logDebug("Unique User IDs", uniqueUserIds);
                 
-                // Convert to room format
                 const rooms = uniqueUserIds.map(chatUserId => `${itemId}-${chatUserId}`);
                 logDebug("Generated Rooms", rooms);
                 
                 setAvailableRooms(rooms);
-                
-                // Also setup socket connection after HTTP fetch
-                setupSocketConnection();
-                
             } else {
                 const errorText = await response.text();
                 logDebug("HTTP Error", { 
@@ -131,85 +110,14 @@ function AvailableBuyers() {
         } catch (error) {
             logDebug("Fetch Error", { 
                 message: error.message, 
-                name: error.name,
                 stack: error.stack 
             });
             setLoading(false);
         }
     };
-
+    
     const setupSocketConnection = () => {
-        try {
-            const token = localStorage.getItem("accessToken");
-            logDebug("Socket Setup Start", { hasToken: !!token });
-            
-            const newSocket = io(import.meta.env.VITE_CHAT_BACKEND_URL, {
-                auth: { token }
-            });
-            
-            newSocket.on("connect", () => {
-                logDebug("Socket Connected", newSocket.id);
-                setSocket(newSocket);
-                fetchBuyers(newSocket);
-            });
-
-            newSocket.on("connect_error", (error) => {
-                logDebug("Socket Connect Error", error);
-                setLoading(false);
-            });
-
-            newSocket.on("error-message", (err) => {
-                logDebug("Socket Error Message", err);
-                setLoading(false);
-            });
-
-            newSocket.on("rooms-list", ({ rooms }) => {
-                logDebug("Socket Rooms List", rooms);
-                
-                // Filter rooms for this item
-                const validRooms = rooms.filter(room => {
-                    const parts = room.split("-");
-                    const isValid = parts.length === 2 && 
-                                  parts[1] !== 'waiting' && 
-                                  parts[0] === itemId;
-                    logDebug(`Room Filter ${room}`, { parts, isValid });
-                    return isValid;
-                });
-                
-                logDebug("Valid Socket Rooms", validRooms);
-                
-                // Merge with HTTP rooms (deduplicate)
-                setAvailableRooms(prevRooms => {
-                    const merged = [...new Set([...prevRooms, ...validRooms])];
-                    logDebug("Merged Rooms", { prevRooms, validRooms, merged });
-                    return merged;
-                });
-                
-                setLoading(false);
-            });
-
-            newSocket.on("error", (error) => {
-                logDebug("Socket Error", error);
-                setLoading(false);
-            });
-
-            // Cleanup function
-            return () => {
-                logDebug("Socket Cleanup", "Disconnecting socket");
-                newSocket.disconnect();
-            };
-            
-        } catch (error) {
-            logDebug("Socket Setup Error", error);
-            setLoading(false);
-        }
-    };
-
-    const fetchBuyers = (socket) => {
-        if (socket && itemId) {
-            logDebug("Emit Fetch Rooms", { itemId });
-            socket.emit("fetch-rooms", { itemId });
-        }
+        // This function can remain if you have real-time updates on this page
     };
 
     const handleClick = (e, room) => {
@@ -220,7 +128,6 @@ function AvailableBuyers() {
         navigate(`/chat/${itemId}/${buyerId}`);
     };
 
-    // Fetch user names for rooms
     useEffect(() => {
         logDebug("User Names Effect", { availableRoomsLength: availableRooms.length });
         
@@ -239,45 +146,31 @@ function AvailableBuyers() {
                 logDebug(`Fetch User ${buyerId}`, { room });
                 
                 try {
-                    console.log(`Fetching user data for ID: ${buyerId}`);
-                    
-                    // Use the correct route: /user/:userId
-                    const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/auth/user/${buyerId}`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
+                    const response = await fetch(
+                        `${import.meta.env.VITE_MAIN_BACKEND_URL}/auth/user/${buyerId}`, 
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
                         }
-                    });
-                    
-                    console.log(`User endpoint response for ${buyerId}:`, {
-                        status: response.status,
-                        ok: response.ok,
-                        statusText: response.statusText,
-                        url: `${import.meta.env.VITE_MAIN_BACKEND_URL}/user/${buyerId}`
-                    });
+                    );
                     
                     if (response.ok) {
                         const userData = await response.json();
-                        console.log(`Raw user data for ${buyerId}:`, userData);
-                        console.log(`Available properties for ${buyerId}:`, Object.keys(userData));
-                        logDebug(`User Data from /user/${buyerId}`, userData);
-                        
-                        const userName = userData.userName || userData.name || `User ${buyerId}`;
-                        console.log(`Extracted username for ${buyerId}:`, userName);
+                        const userName = userData.data?.userName || `User ${buyerId}`;
+                        logDebug(`User Data for ${buyerId}`, { userName });
                         names[room] = userName;
                     } else {
-                        console.log(`User ${buyerId} not found (${response.status}), using fallback name`);
                         logDebug(`User ${buyerId} not found`, response.status);
                         names[room] = `User ${buyerId}`;
                     }
                 } catch (error) {
-                    console.error(`User fetch exception for ${buyerId}:`, error);
                     logDebug(`User Fetch Exception ${buyerId}`, error);
                     names[room] = `User ${buyerId}`;
                 }
             }
             
-            console.log("Final extracted names:", names);
             logDebug("Final Room Names", names);
             setRoomName(names);
             setLoading(false);
@@ -292,13 +185,7 @@ function AvailableBuyers() {
                 <Navbar />
                 <section className="bg-[#FFF4DC] py-10 min-h-screen">
                     <div className="bg-white mx-14 px-5 pt-5 pb-10 rounded-xl shadow-lg">
-                        <h1 className="text-2xl font-semibold text-center">Loading...</h1>
-                        <div className="mt-4 text-xs text-gray-500">
-                            <p>ItemId: {itemId}</p>
-                            <p>UserId: {userId}</p>
-                            <p>Recent Chats: {recentChats.length}</p>
-                            <p>Available Rooms: {availableRooms.length}</p>
-                        </div>
+                        <h1 className="text-2xl font-semibold text-center">Loading Available Buyers...</h1>
                     </div>
                 </section>
             </div>
@@ -311,13 +198,6 @@ function AvailableBuyers() {
             <section className="bg-[#FFF4DC] py-10 min-h-screen">
                 <div className="bg-white mx-14 px-5 pt-5 pb-10 rounded-xl shadow-lg">
                     <h1 className="text-2xl font-semibold text-center mb-6">Available Buyers</h1>
-                                        
-                    {/* Show recent chats info */}
-                    {recentChats.length > 0 && (
-                        <div className="mb-4 text-center text-sm text-gray-600">
-                            Found {recentChats.length} recent conversation(s)
-                        </div>
-                    )}
                     
                     {availableRooms.length === 0 ? (
                         <div className="text-center py-10">
@@ -325,21 +205,12 @@ function AvailableBuyers() {
                             <p className="text-sm text-gray-500 mt-2">
                                 Buyers will appear here once they start chatting about your item
                             </p>
-                            {recentChats.length > 0 && (
-                                <div className="mt-4 p-4 bg-yellow-100 rounded">
-                                    <p className="text-sm text-yellow-800">
-                                        ⚠️ Found {recentChats.length} chats in database but no rooms generated
-                                    </p>
-                                    <p className="text-xs mt-2">Check the debug section above for details</p>
-                                </div>
-                            )}
                         </div>
                     ) : (
                         <div className="flex justify-center gap-5 p-5 flex-wrap">
                             {availableRooms.map((room, index) => {
                                 const buyerId = room.split("-")[1];
-                                const userName = roomName[room] || `Loading...`;
-                                const chatInfo = recentChats.find(chat => chat.userId.toString() === buyerId);
+                                const userName = roomName[room] || "Loading...";
                                 
                                 return (
                                     <button 
@@ -350,14 +221,6 @@ function AvailableBuyers() {
                                         <div className="text-center">
                                             <div className="font-semibold">{userName}</div>
                                             <div className="text-xs text-gray-600">ID: {buyerId}</div>
-                                            <div className="text-xs text-gray-500">Room: {room}</div>
-                                            {chatInfo && (
-                                                <div className="text-xs text-gray-500 mt-1">
-                                                    Last: {new Date(chatInfo.createdAt).toLocaleDateString()}
-                                                    <br />
-                                                    Msg: {chatInfo.message?.substring(0, 20)}...
-                                                </div>
-                                            )}
                                         </div>
                                     </button>
                                 );

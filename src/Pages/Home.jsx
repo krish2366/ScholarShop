@@ -18,8 +18,8 @@ const Home = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log("API response:", data);
-        if (data.success && Array.isArray(data.data)) {
-          setProducts(data.data.slice(0,8));
+        if (Array.isArray(data)) {
+          setProducts(data.slice(0,8));
           setLoading(false);
         } else {
           console.error("Invalid API response:", data);

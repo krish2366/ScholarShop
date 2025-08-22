@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Search, Filter, Grid, List } from 'lucide-react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../Components/Navbar.jsx';
 
 const CategoryProductsPage = () => {
@@ -12,14 +12,20 @@ const CategoryProductsPage = () => {
   const [viewMode, setViewMode] = useState('grid');
   const [loading, setLoading] = useState(true);
 
-  const categories = ['Electronics', 'Books', 'PYQs', 'Instruments', 'Essentials'];
+  const navigate = useNavigate();
+  const categories = ['All','Electronics', 'Books', 'PYQs', 'Instruments', 'Essentials','OTHERS'];
 
   // Items from backend
   useEffect(() =>{
     async function fetchProducts() {
         setLoading(true);
         try {
-            const res = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/item/get-item-by-category/${selectedCategory}`);
+            let res;
+            if(selectedCategory === 'All'){
+              res = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/item/get-all-items`);
+            } else{
+              res = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/item/get-item-by-category/${selectedCategory}`);
+            }
             if (!res.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -38,6 +44,7 @@ const CategoryProductsPage = () => {
 
   // Filter products
   useEffect(() => {
+    if(selectedCategory === 'All')return;
     let filtered = products.filter(product => 
       product.category === selectedCategory &&
       (product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -239,7 +246,7 @@ const CategoryProductsPage = () => {
                   </p>
                   <div className="flex items-center justify-between">
                     <button
-                      onClick={() => console.log(`Navigate to /item/${product.id}`)}
+                      onClick={() => navigate(`/item/${product.id}`)}
                       className="bg-[#F47C26] text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition text-sm"
                     >
                       Explore This
