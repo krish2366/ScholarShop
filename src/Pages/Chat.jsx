@@ -2,6 +2,14 @@ import React, { useEffect, useRef, useState } from "react";
 import Navbar from "../Components/Navbar";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
+import {
+  Send,
+  Wifi,
+  WifiOff,
+  MessageCircle,
+  RefreshCw,
+  AlertCircle,
+} from "lucide-react";
 
 function Chat({ buyerId }) {
   const params = useParams();
@@ -599,7 +607,7 @@ function Chat({ buyerId }) {
       <section className="bg-[#FFF4DC] pb-5">
         <h1 className="text-center text-3xl font-bold m-6 mt-0 pt-6">
           Chat Section
-          {itemInfo && (
+          {/* {itemInfo && (
             <span className="block text-lg font-normal mt-2">
               Item: {itemInfo.title}
             </span>
@@ -621,88 +629,164 @@ function Chat({ buyerId }) {
           </span>
           <span className="block text-xs font-normal text-gray-400">
             Chatting with: {otherUserName}
-          </span>
+          </span> */}
         </h1>
 
-        <div className="border-8 border-gray-500 rounded-lg border-double m-6 p-6 h-[70vh]">
-          <div
-            className="h-[85%] relative bg-white p-6 rounded-lg overflow-y-auto"
-            ref={chatBoxRef}
-          >
-            {messages && messages.length > 0 ? (
-              messages
-                .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)) // Sort by timestamp
-                .map((msg, index) => {
-                  // Parse both IDs to ensure consistent comparison
-                  const msgSenderId = parseInt(msg.senderId || msg.userId);
-                  const currentUserId = parseInt(userId);
-                  const isCurrentUser = msgSenderId === currentUserId;
+        <div className="max-w-4xl mx-auto h-screen px-4 py-6">
+          <div className="bg-white h-full rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+            {/* Chat Messages */}
+            <div
+              className="h-[85%] p-4 md:p-6 overflow-y-auto bg-gradient-to-b from-orange-50 to-white"
+              ref={chatBoxRef}
+            >
+              {messages && messages.length > 0 ? (
+                <div className="space-y-4">
+                  {messages
+                    .sort(
+                      (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+                    )
+                    .map((msg, index) => {
+                      const msgSenderId = parseInt(msg.senderId || msg.userId);
+                      const currentUserId = parseInt(userId);
+                      const isCurrentUser = msgSenderId === currentUserId;
 
-                  console.log("Message debug:", {
-                    msgSenderId,
-                    currentUserId,
-                    isCurrentUser,
-                    originalMsg: msg,
-                  });
+                      console.log("Message debug:", {
+                        msgSenderId,
+                        currentUserId,
+                        isCurrentUser,
+                        originalMsg: msg,
+                      });
 
-                  return (
-                    <div
-                      key={msg.id || index}
-                      className={`w-full mb-5 ${
-                        isCurrentUser
-                          ? "flex justify-end"
-                          : "flex justify-start"
-                      }`}
-                    >
-                      <div
-                        className={`border-2 border-gray-500 p-2 rounded-lg w-fit max-w-[40%] ${
-                          isCurrentUser ? "bg-blue-100" : "bg-gray-100"
-                        }`}
-                      >
-                        <span className="font-bold">
-                          {isCurrentUser ? "You" : otherUserName}:
-                        </span>
-                        <p>{msg.message}</p>
-                        {msg.timestamp && (
-                          <p className="text-xs text-gray-500 mt-1">
-                            {new Date(msg.timestamp).toLocaleTimeString()}
-                          </p>
+                      return (
+                        <div
+                          key={msg.id || index}
+                          className={`flex ${
+                            isCurrentUser ? "justify-end" : "justify-start"
+                          }`}
+                        >
+                          <div
+                            className={`max-w-[85%] sm:max-w-[70%] md:max-w-[60%]`}
+                          >
+                            <div
+                              className={`px-4 py-3 rounded-2xl shadow-sm text-[#333333] ${
+                                isCurrentUser
+                                  ? "rounded-br-md bg-[#f7a367] "
+                                  : "bg-white border border-gray-200 rounded-bl-md"
+                              }`}
+                              
+                            >
+                              <p className="text-sm leading-relaxed break-words">
+                                {msg.message}
+                              </p>
+                            </div>
+
+                            <div
+                              className={`flex items-center mt-1 px-2 ${
+                                isCurrentUser ? "justify-end" : "justify-start"
+                              }`}
+                            >
+                              <span
+                                className={`text-xs font-medium mr-2`}
+                                style={
+                                  isCurrentUser
+                                    ? { color: "#F47C26" }
+                                    : { color: "#333333", opacity: 0.7 }
+                                }
+                              >
+                                {isCurrentUser ? "You" : otherUserName}
+                              </span>
+                              {msg.timestamp && (
+                                <span
+                                  className="text-xs"
+                                  style={{ color: "#333333", opacity: 0.5 }}
+                                >
+                                  {new Date(msg.timestamp).toLocaleTimeString(
+                                    [],
+                                    {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    }
+                                  )}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              ) : (
+                <div className="flex-1 flex items-center justify-center h-full">
+                  <div className="text-center" style={{ color: "#333333" }}>
+                    <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                      <MessageCircle size={24} className="text-gray-400" />
+                    </div>
+                    <p className="text-lg font-medium mb-2">No messages yet</p>
+                    <p className="text-sm opacity-70">
+                      Start the conversation!
+                    </p>
+
+                    {/* Connection Status */}
+                    <div className="mt-4 p-3 bg-gray-50 rounded-lg inline-block">
+                      <div className="flex items-center justify-center gap-2 text-xs">
+                        {socket?.connected ? (
+                          <>
+                            <Wifi size={14} className="text-green-500" />
+                            <span>Connected to {roomId || "room"}</span>
+                          </>
+                        ) : (
+                          <>
+                            <WifiOff size={14} className="text-red-500" />
+                            <span>Disconnected</span>
+                          </>
                         )}
                       </div>
                     </div>
-                  );
-                })
-            ) : (
-              <div className="text-center text-gray-500 mt-10">
-                <p>No messages yet. Start the conversation!</p>
-                <p className="text-xs mt-2">
-                  Room: {roomId || "Not connected"} | Socket:{" "}
-                  {socket?.connected ? "Connected" : "Disconnected"}
-                </p>
-              </div>
-            )}
-          </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
-          <form
-            className="h-[10%] mt-5 flex items-center gap-3"
-            onSubmit={sendMessage}
-          >
-            <input
-              type="text"
-              placeholder="Type a message..."
-              className="flex-1 p-2 border-2 border-gray-500 rounded-lg"
-              value={messageInput}
-              onChange={(e) => setMessageInput(e.target.value)}
-              disabled={!socket || !roomId}
-            />
-            <button
-              type="submit"
-              disabled={!socket || !roomId || !messageInput.trim()}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 disabled:bg-gray-400"
-            >
-              Send
-            </button>
-          </form>
+            {/* Message Input */}
+            <div className="h-[15%] border-t border-gray-700 bg-white p-4 md:p-6">
+              <div className="flex items-end gap-3">
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    placeholder="Type a message..."
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 text-sm md:text-base"
+                    style={{ "--tw-ring-color": "#F47C26" }}
+                    value={messageInput}
+                    onChange={(e) => setMessageInput(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage(e);
+                      }
+                    }}
+                    disabled={!socket || !roomId}
+                  />
+                </div>
+
+                <button
+                  onClick={sendMessage}
+                  disabled={!socket || !roomId || !messageInput.trim()}
+                  className="p-3 rounded-2xl font-medium transition-all duration-200 flex-shrink-0 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-white"
+                  style={{ backgroundColor: "#F47C26" }}
+                  onMouseEnter={(e) =>
+                    !e.target.disabled &&
+                    (e.target.style.backgroundColor = "#ea580c")
+                  }
+                  onMouseLeave={(e) =>
+                    !e.target.disabled &&
+                    (e.target.style.backgroundColor = "#F47C26")
+                  }
+                >
+                  <Send size={20} />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </section>

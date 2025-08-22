@@ -1,39 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar.jsx";
-import { Upload } from "lucide-react";
+import { Upload, Calendar, User, BookOpen, LogOut } from "lucide-react";
 
 export default function Profile() {
   const [user, setUser] = useState({});
   const [profilePicture, setProfilePicture] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("accessToken");
-      console.log(token.slice(20));
       try {
         const res = await fetch(
           `${import.meta.env.VITE_MAIN_BACKEND_URL}/profile/get-profile`,
           {
             method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
-
         const resData = await res.json();
-        console.log(resData);
-        if (resData.success) {
-          console.log(resData.data);
-          setUser(resData.data);
-        }
+        if (resData.success) setUser(resData.data);
       } catch (error) {
         console.log(error);
       }
     };
-
     fetchProfile();
   }, []);
 
@@ -45,6 +37,10 @@ export default function Profile() {
     }
   };
 
+  const triggerFileInput = () => {
+    document.getElementById("profile-upload-main").click();
+  };
+
   const uploadProfilePicture = async (file) => {
     setUploading(true);
     const token = localStorage.getItem("accessToken");
@@ -52,32 +48,23 @@ export default function Profile() {
     formData.append("profilePicture", file);
 
     try {
-      // Get user ID from localStorage instead of user state (which might not be loaded yet)
       const userId = localStorage.getItem("userId") || user.id || user.userId;
-
       if (!userId) {
         alert("User ID not found. Please login again.");
         setUploading(false);
         return;
       }
-
       const response = await fetch(
-        `${
-          import.meta.env.VITE_MAIN_BACKEND_URL
-        }/profile/update-profile-picture/${userId}`,
+        `${import.meta.env.VITE_MAIN_BACKEND_URL}/profile/update-profile-picture/${userId}`,
         {
           method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           body: formData,
         }
       );
-
       if (response.ok) {
         const result = await response.json();
         if (result.success) {
-          // Update user state with new profile picture
           setUser((prevUser) => ({
             ...prevUser,
             profile: {
@@ -88,66 +75,42 @@ export default function Profile() {
                 result.profilePicUrl,
             },
           }));
-          console.log("Profile picture uploaded successfully");
         }
       } else {
-        console.log("Profile picture upload failed:", response.status);
         alert("Failed to upload profile picture. Please try again.");
       }
-    } catch (error) {
-      console.error("Error uploading profile picture:", error);
+    } catch {
       alert("An error occurred while uploading the profile picture.");
     } finally {
       setUploading(false);
     }
   };
 
-  const parseImageUrl = (imageUrl) => {
-    if (!imageUrl) {
-      console.warn("imageUrl is null or undefined");
-      return [];
-    }
+  const logout = () => {
+    localStorage.clear();
+    navigate("/");
+  };
 
+  // Helpers for image URLs
+  const parseImageUrl = (imageUrl) => {
+    if (!imageUrl) return [];
     const urlString =
       Array.isArray(imageUrl) && imageUrl.length > 0 ? imageUrl[0] : imageUrl;
-
-    if (typeof urlString === "string") {
-      // Check if it's already a valid URL (starts with http/https)
-      if (urlString.startsWith("http://") || urlString.startsWith("https://")) {
-        return [urlString];
-      }
-      console.log("Treating as single URL:", urlString);
-      return [urlString];
-    }
-
-    if (Array.isArray(urlString)) {
-      console.log("imageUrl is already an array:", urlString);
-      return urlString;
-    }
-
-    console.warn("imageUrl is not a string or array:", urlString);
+    if (typeof urlString === "string") return [urlString];
+    if (Array.isArray(urlString)) return urlString;
     return [urlString];
   };
-
   const getFirstImageUrl = (imageUrl) => {
     const parsedUrls = parseImageUrl(imageUrl);
-    const firstUrl = parsedUrls.length > 0 ? parsedUrls[0] : "";
-    console.log("First image URL:", firstUrl);
-    return firstUrl;
+    return parsedUrls.length > 0 ? parsedUrls[0] : "";
   };
-
   const getProfilePictureUrl = () => {
-    // Fix: Use profilePicUrl instead of profilePicture based on the console logs
     const profilePic =
       user?.profile?.profilePicUrl || user?.profile?.profilePicture;
     if (profilePic) {
-      // Handle different formats of profile picture URLs
-      if (typeof profilePic === "string") {
-        return profilePic;
-      }
-      if (Array.isArray(profilePic) && profilePic.length > 0) {
+      if (typeof profilePic === "string") return profilePic;
+      if (Array.isArray(profilePic) && profilePic.length > 0)
         return profilePic[0];
-      }
     }
     return null;
   };
@@ -155,131 +118,163 @@ export default function Profile() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-[#FFF4DC]">
-        <div className="max-w-7xl mx-auto ml-0 pl-10 px-6 py-8">
-          <div className="flex flex-col lg:flex-row gap-14">
-            {/* Left Side - Profile Info */}
-            <div className="lg:w-1/3">
-              <div className="bg-white rounded-xl shadow-sm p-8 sticky top-8">
-                {/* Profile Picture */}
-                <div className="text-center mb-6">
+      {/* Container */}
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 py-4 px-2 sm:px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-[350px_1fr] gap-6 lg:gap-10">
+            {/* Profile Card */}
+            <div className="bg-white/90 backdrop-blur rounded-3xl p-6 shadow-xl border border-white/20 h-fit lg:sticky lg:top-8">
+              {/* Profile Picture */}
+              <div className="text-center mb-4">
+                <div className="relative group inline-block">
                   {getProfilePictureUrl() ? (
                     <img
                       src={getProfilePictureUrl()}
                       alt="Profile"
-                      className="w-32 h-32 rounded-full mx-auto shadow-lg object-cover border-4 border-white"
+                      className="w-28 h-28 sm:w-32 sm:h-32 rounded-full mx-auto object-cover border-4 border-orange-400 cursor-pointer"
+                      onClick={triggerFileInput}
                       onError={(e) => {
                         e.target.style.display = "none";
                         e.target.nextSibling.style.display = "flex";
                       }}
                     />
                   ) : (
-                    <div className="w-32 h-32 rounded-full mx-auto shadow-lg border-4 border-white bg-[#e98d4b] flex items-center justify-center text-white text-3xl font-bold">
+                    <div
+                      className="w-28 h-28 sm:w-32 sm:h-32 rounded-full mx-auto bg-orange-400 flex items-center justify-center text-white text-2xl font-bold border-4 border-orange-400 cursor-pointer"
+                      onClick={triggerFileInput}
+                    >
                       {user?.profile?.userName
                         ? user.profile.userName.charAt(0).toUpperCase()
+                        : user?.username
+                        ? user.username.charAt(0).toUpperCase()
                         : "U"}
                     </div>
                   )}
-                </div>
 
-                {/* Username */}
-                <div className="text-center mb-6">
-                  <h1
-                    className="text-2xl font-bold mb-4"
-                    style={{ color: "#333333" }}
+                  {/* Hover overlay */}
+                  <div
+                    className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+                    onClick={triggerFileInput}
                   >
-                    @{user?.profile?.userName}
-                  </h1>
-
-                  <div className="relative">
-                    <button className="w-full bg-[#F47C26] py-3 px-6 rounded-lg font-medium transition-colors text-white hover:bg-[#ea580c] relative overflow-hidden">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleProfilePictureChange}
-                        className="absolute inset-0 opacity-0 cursor-pointer"
-                        disabled={uploading}
-                      />
-                      {uploading ? (
-                        <>
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white inline mr-2"></div>
-                          Uploading...
-                        </>
-                      ) : (
-                        <>
-                          <Upload className="inline mr-2" size={18} />
-                          Upload New
-                        </>
-                      )}
-                    </button>
+                    <Upload size={20} className="text-white" />
                   </div>
+                </div>
+              </div>
+              {/* User Info */}
+              <div className="text-center">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
+                  @{user?.profile?.userName || user?.username || "Aryan"}
+                </h2>
+                {/* Stats */}
+                <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 mb-4">
+                  <span className="flex items-center justify-center gap-1 text-gray-600 text-sm">
+                    <BookOpen size={16} />
+                    {user?.items?.length || 0} uploads
+                  </span>
+                  <span className="flex items-center justify-center gap-1 text-gray-600 text-sm">
+                    <Calendar size={16} />
+                    Joined {new Date().getFullYear()}
+                  </span>
+                </div>
+                {/* Upload Button */}
+                <button
+                  className="w-full bg-orange-400 text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 hover:bg-orange-500 transition-colors disabled:opacity-70 disabled:cursor-not-allowed mb-3"
+                  disabled={uploading}
+                  onClick={triggerFileInput}
+                >
+                  {uploading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload size={18} />
+                      Upload New
+                    </>
+                  )}
+                </button>
+
+                {/* Logout Button */}
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="w-full mt-1 bg-orange-100 text-orange-500 font-semibold py-2 px-4 rounded-xl flex items-center justify-center gap-2 hover:bg-orange-200 transition-colors"
+                >
+                  <LogOut size={18} />
+                  Logout
+                </button>
+
+                <input
+                  id="profile-upload-main"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleProfilePictureChange}
+                  className="hidden"
+                />
+                {/* Email */}
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <span className="flex items-center justify-center gap-2 text-gray-600 text-sm break-words">
+                    <User size={16} />
+                    {user?.email || user?.profile?.email || "Loading..."}
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Right Side - Uploads */}
-            <div className="lg:w-2/3">
-              <div className="mb-6">
-                <h2
-                  className="text-2xl font-bold mb-2"
-                  style={{ color: "#333333" }}
-                >
-                  My Uploads
-                </h2>
-                <p style={{ color: "#333333" }} className="opacity-70">
-                  {user?.items?.length} items
-                </p>
-              </div>
-
-              {/* Uploads Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {user?.items?.length > 0 ? (
-                  user.items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden"
-                    >
-                      <div className="relative">
-                        <img
-                          src={getFirstImageUrl(item.imageUrl)}
-                          alt={item.title}
-                          onError={(e) => {
-                            console.error(
-                              "Image load failed for:",
-                              product.title,
-                              getFirstImageUrl(product.imageUrl)
-                            );
-                            e.target.src =
-                              "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==";
-                          }}
-                          className="w-full h-48 object-cover"
-                        />
-                      </div>
-
-                      <div className="p-4">
-                        <h3
-                          className="font-semibold mb-3"
-                          style={{ color: "#333333" }}
-                        >
-                          {item.title}
-                        </h3>
-
-                        <div className="flex items-center justify-between">
+            {/* Uploads Section */}
+            <div className="min-h-[400px]">
+              <div className="bg-white/90 backdrop-blur rounded-3xl p-6 shadow-xl border border-white/20">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6 pb-4 border-b-2 border-orange-400">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-800">My Uploads</h3>
+                  <span className="bg-orange-100 text-gray-600 text-sm px-3 py-1 rounded-full self-start sm:self-center">
+                    {user?.items?.length || 0} items
+                  </span>
+                </div>
+                {/* Uploads Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {user?.items && user.items.length > 0 ? (
+                    user.items.map((item, index) => (
+                      <div
+                        key={item.id || index}
+                        className="bg-white rounded-2xl border border-orange-100 shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                      >
+                        <div className="h-40 sm:h-48 overflow-hidden">
+                          <img
+                            src={getFirstImageUrl(item.imageUrl)}
+                            alt={item.title || `Item ${index + 1}`}
+                            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                            onError={(e) => {
+                              e.target.src =
+                                "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzlhYTJhOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==";
+                            }}
+                          />
+                        </div>
+                        <div className="p-4">
+                          <h4 className="font-semibold text-gray-800 mb-2 text-base">
+                            {item.title || `Item ${index + 1}`}
+                          </h4>
+                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                            {item.description || "No description available"}
+                          </p>
                           <Link
-                            to={`/item/${item.id}`}
-                            className="px-4 py-2 rounded-lg bg-[#F47C26] text-sm font-medium transition-colors text-white hover:bg-[#ea580c]"
+                            to={`/item/${item.id || index}`}
+                            className="block w-full bg-orange-400 text-white text-center py-2 px-4 rounded-lg font-medium hover:bg-orange-500 transition-colors"
                           >
                             View
                           </Link>
                         </div>
                       </div>
+                    ))
+                  ) : (
+                    <div className="col-span-full text-center py-12">
+                      <BookOpen size={48} className="mx-auto mb-4 text-orange-400 opacity-50" />
+                      <h4 className="text-lg font-semibold text-gray-700 mb-2">No uploads yet</h4>
+                      <p className="text-gray-500">Share your first item to get started!</p>
                     </div>
-                  ))
-                ) : (
-                  <p className="text-center text-[#333333] text-xl">
-                    No Items to show...
-                  </p>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </div>
