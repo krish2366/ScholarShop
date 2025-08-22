@@ -163,7 +163,7 @@ export default function Profile() {
               {/* User Info */}
               <div className="text-center">
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
-                  @{user?.profile?.userName || user?.username || "Aryan"}
+                  @{user?.profile?.userName || user?.username || "Unknown"}
                 </h2>
                 {/* Stats */}
                 <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 mb-4">
