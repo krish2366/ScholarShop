@@ -6,8 +6,9 @@ import {
   FaBox, 
   FaChartLine, 
   FaCog, 
-  FaSignOutAlt,
-  FaUserShield
+  FaSignOutAlt, 
+  FaUserShield,
+  FaCommentDots  // ✅ Added for Feedback
 } from 'react-icons/fa';
 
 const AdminSidebar = () => {
@@ -19,9 +20,7 @@ const AdminSidebar = () => {
       const token = localStorage.getItem('adminToken');
       await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/admin/logout`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
     } catch (error) {
       console.error('Logout error:', error);
@@ -37,58 +36,47 @@ const AdminSidebar = () => {
     { name: 'Dashboard', icon: FaHome, path: '/admin/dashboard' },
     { name: 'Users', icon: FaUsers, path: '/admin/users' },
     { name: 'Items', icon: FaBox, path: '/admin/items' },
+    { name: 'Feedback', icon: FaCommentDots, path: '/admin/feedback' }, // ✅ Added this line
     { name: 'Analytics', icon: FaChartLine, path: '/admin/analytics' },
     { name: 'Settings', icon: FaCog, path: '/admin/settings' }
   ];
 
   return (
-    <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
-      {/* Logo */}
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center">
-          <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
-            <FaUserShield className="text-white text-lg" />
-          </div>
-          <div>
-            <h2 className="text-lg font-bold text-gray-900">Admin Panel</h2>
-            <p className="text-sm text-gray-500 capitalize">{adminRole}</p>
-          </div>
+    <div className="bg-gray-800 text-white w-64 min-h-screen p-4">
+      <div className="flex items-center mb-8">
+        <FaUserShield className="text-orange-500 text-2xl mr-2" />
+        <div>
+          <h2 className="text-xl font-bold">Admin Panel</h2>
+          <p className="text-sm text-gray-400 capitalize">{adminRole}</p>
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 p-4">
-        <ul className="space-y-2">
-          {menuItems.map((item) => (
-            <li key={item.name}>
-              <NavLink
-                to={item.path}
-                className={({ isActive }) =>
-                  `flex items-center px-4 py-3 rounded-lg transition-colors duration-200 ${
-                    isActive
-                      ? 'bg-purple-100 text-purple-700 border-r-2 border-purple-500'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                  }`
-                }
-              >
-                <item.icon className="mr-3 text-lg" />
-                <span className="font-medium">{item.name}</span>
-              </NavLink>
-            </li>
-          ))}
-        </ul>
+      <nav className="space-y-2">
+        {menuItems.map((item) => (
+          <NavLink
+            key={item.name}
+            to={item.path}
+            className={({ isActive }) =>
+              `flex items-center px-4 py-3 rounded-lg transition-colors ${
+                isActive
+                  ? 'bg-orange-600 text-white'
+                  : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+              }`
+            }
+          >
+            <item.icon className="mr-3" />
+            {item.name}
+          </NavLink>
+        ))}
       </nav>
 
-      {/* Logout */}
-      <div className="p-4 border-t border-gray-200">
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200 hover:scale-105 active:scale-95 transform transition-transform"
-        >
-          <FaSignOutAlt className="mr-3" />
-          <span className="font-medium">Logout</span>
-        </button>
-      </div>
+      <button
+        onClick={handleLogout}
+        className="flex items-center w-full px-4 py-3 mt-8 text-gray-300 hover:bg-red-600 hover:text-white rounded-lg transition-colors"
+      >
+        <FaSignOutAlt className="mr-3" />
+        Logout
+      </button>
     </div>
   );
 };
