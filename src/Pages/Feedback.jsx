@@ -13,13 +13,13 @@ const FeedbackPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({
-      name,
-      email,
-      category,
-      rating,
-      feedback
-    });
+    // console.log({
+    //   name,
+    //   email,
+    //   category,
+    //   rating,
+    //   feedback
+    // });
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 3000);
   };

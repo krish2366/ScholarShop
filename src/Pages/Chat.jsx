@@ -24,7 +24,7 @@ function Chat({ buyerId }) {
   const param1 = Object.values(params)[0];
   const param2 = Object.values(params)[1];
 
-  console.log("URL Params:", { param1, param2, userId });
+  // console.log("URL Params:", { param1, param2, userId });
 
   // State management
   const [urlPattern, setUrlPattern] = useState(null);
@@ -61,20 +61,20 @@ function Chat({ buyerId }) {
       }
 
       if (!otherUserId) {
-        console.log("No otherUserId found:", {
-          userRole,
-          itemInfo,
-          actualBuyerId_state,
-        });
+        // console.log("No otherUserId found:", {
+        //   userRole,
+        //   itemInfo,
+        //   actualBuyerId_state,
+        // });
         return;
       }
 
-      console.log(
-        "Fetching username for user:",
-        otherUserId,
-        "| User role:",
-        userRole
-      );
+      // console.log(
+      //   "Fetching username for user:",
+      //   otherUserId,
+      //   "| User role:",
+      //   userRole
+      // );
 
       // Use the correct route pattern: /user/:userId
       const response = await fetch(
@@ -87,19 +87,19 @@ function Chat({ buyerId }) {
         }
       );
 
-      console.log("User endpoint response:", {
-        status: response.status,
-        ok: response.ok,
-        statusText: response.statusText,
-        url: `${
-          import.meta.env.VITE_MAIN_BACKEND_URL
-        }/auth/user/${otherUserId}`,
-      });
+      // console.log("User endpoint response:", {
+      //   status: response.status,
+      //   ok: response.ok,
+      //   statusText: response.statusText,
+      //   url: `${
+      //     import.meta.env.VITE_MAIN_BACKEND_URL
+      //   }/auth/user/${otherUserId}`,
+      // });
 
       if (response.ok) {
         const userData = await response.json();
-        console.log("Raw user data received:", userData);
-        console.log("Available properties:", Object.keys(userData));
+        // console.log("Raw user data received:", userData);
+        // console.log("Available properties:", Object.keys(userData));
 
         // Fix: Access userName from the nested data object
         const userName =
@@ -108,12 +108,12 @@ function Chat({ buyerId }) {
           userData.userName ||
           userData.name ||
           `User ${otherUserId}`;
-        console.log("Extracted username:", userName);
+        // console.log("Extracted username:", userName);
         setOtherUserName(userName);
       } else {
-        console.log(
-          `User ${otherUserId} not found (${response.status}), using fallback name`
-        );
+        // console.log(
+        //   `User ${otherUserId} not found (${response.status}), using fallback name`
+        // );
         setOtherUserName(`User ${otherUserId}`);
       }
     } catch (error) {
@@ -134,9 +134,9 @@ function Chat({ buyerId }) {
       const token = localStorage.getItem("accessToken");
       if (!token || !productId_state || !actualBuyerId_state) return;
 
-      console.log(
-        `Loading history for item: ${productId_state}, buyer: ${actualBuyerId_state}`
-      );
+      // console.log(
+      //   `Loading history for item: ${productId_state}, buyer: ${actualBuyerId_state}`
+      // );
 
       // Corrected URL:
       const response = await fetch(
@@ -151,10 +151,10 @@ function Chat({ buyerId }) {
 
       if (response.ok) {
         const historicalChats = await response.json();
-        console.log(
-          "Filtered historical messages loaded from backend:",
-          historicalChats
-        );
+        // console.log(
+        //   "Filtered historical messages loaded from backend:",
+        //   historicalChats
+        // );
 
         const formattedMessages = historicalChats.map((chat) => ({
           id: chat.id,
@@ -165,7 +165,7 @@ function Chat({ buyerId }) {
           roomId: `${productId_state}-${actualBuyerId_state}`,
         }));
 
-        console.log("Final formatted messages:", formattedMessages);
+        // console.log("Final formatted messages:", formattedMessages);
         setMessages(formattedMessages);
 
         // Scroll to bottom
@@ -204,7 +204,7 @@ function Chat({ buyerId }) {
             }
           );
         } catch (err) {
-          console.log("Could not fetch user info, continuing with item lookup");
+          // console.log("Could not fetch user info, continuing with item lookup");
         }
 
         // Strategy 2: Try both possible item IDs
@@ -225,12 +225,12 @@ function Chat({ buyerId }) {
             itemData = await response.json();
             const itemSellerId = parseInt(itemData.sellerId || itemData.userId);
 
-            console.log("Item found with param1 as productId:", {
-              itemSellerId,
-              currentUserId: userId,
-              param1,
-              param2,
-            });
+            // console.log("Item found with param1 as productId:", {
+            //   itemSellerId,
+            //   currentUserId: userId,
+            //   param1,
+            //   param2,
+            // });
 
             // If current user is the seller, this is seller pattern
             if (userId === itemSellerId) {
@@ -240,7 +240,7 @@ function Chat({ buyerId }) {
               setUserRole("seller");
               setItemInfo(itemData);
               itemFound = true;
-              console.log("Seller pattern confirmed");
+              // console.log("Seller pattern confirmed");
             } else {
               // Current user is not the seller, so they might be the buyer
               // Check if param2 matches current user (buyer pattern)
@@ -251,12 +251,12 @@ function Chat({ buyerId }) {
                 setUserRole("buyer");
                 setItemInfo(itemData);
                 itemFound = true;
-                console.log("Buyer pattern with param1 as productId");
+                // console.log("Buyer pattern with param1 as productId");
               }
             }
           }
         } catch (err) {
-          console.log("Param1 as productId failed:", err.message);
+          // console.log("Param1 as productId failed:", err.message);
         }
 
         // If not found, try param2 as productId (buyer pattern: /sellerId/productId)
@@ -275,12 +275,12 @@ function Chat({ buyerId }) {
                 itemData.sellerId || itemData.userId
               );
 
-              console.log("Item found with param2 as productId:", {
-                itemSellerId,
-                currentUserId: userId,
-                param1,
-                param2,
-              });
+              // console.log("Item found with param2 as productId:", {
+              //   itemSellerId,
+              //   currentUserId: userId,
+              //   param1,
+              //   param2,
+              // });
 
               // If param1 matches sellerId, this is buyer pattern
               if (parseInt(param1) === itemSellerId) {
@@ -290,20 +290,20 @@ function Chat({ buyerId }) {
                 setUserRole("buyer");
                 setItemInfo(itemData);
                 itemFound = true;
-                console.log("Buyer pattern confirmed");
+                // console.log("Buyer pattern confirmed");
               }
             }
           } catch (err) {
-            console.log("Param2 as productId failed:", err.message);
+            // console.log("Param2 as productId failed:", err.message);
           }
         }
 
         if (itemFound) {
           setUrlPattern(detectedPattern);
-          console.log(`Pattern detected: ${detectedPattern}`);
+          // console.log(`Pattern detected: ${detectedPattern}`);
         } else {
           // Fallback: Make educated guess based on typical patterns
-          console.log("No item found, making educated guess...");
+          // console.log("No item found, making educated guess...");
 
           // Assume seller pattern if param2 looks like a user ID
           if (userId && (userId === parseInt(param1) || param2.length < 10)) {
@@ -311,13 +311,13 @@ function Chat({ buyerId }) {
             setProductId(param1);
             setActualBuyerId(parseInt(param2));
             setUserRole("seller");
-            console.log("Fallback: Assuming seller pattern");
+            // console.log("Fallback: Assuming seller pattern");
           } else {
             setUrlPattern("buyer");
             setProductId(param2);
             setActualBuyerId(userId);
             setUserRole("buyer");
-            console.log("Fallback: Assuming buyer pattern");
+            // console.log("Fallback: Assuming buyer pattern");
           }
         }
       } catch (error) {
@@ -355,7 +355,7 @@ function Chat({ buyerId }) {
       return;
     }
 
-    console.log("Setting up socket connection...");
+    // console.log("Setting up socket connection...");
 
     // Establish socket connection
     const newSocket = io(import.meta.env.VITE_CHAT_BACKEND_URL, {
@@ -367,21 +367,21 @@ function Chat({ buyerId }) {
     });
 
     newSocket.on("connect", () => {
-      console.log("Socket connected successfully");
+      // console.log("Socket connected successfully");
       setSocket(newSocket);
       setReconnectAttempts(0);
       joinRoom(newSocket);
     });
 
     newSocket.on("reconnect", (attemptNumber) => {
-      console.log("Socket reconnected after", attemptNumber, "attempts");
+      // console.log("Socket reconnected after", attemptNumber, "attempts");
       setReconnectAttempts(0);
       // Reload historical messages on reconnect
       loadHistoricalMessages();
     });
 
     newSocket.on("reconnect_attempt", (attemptNumber) => {
-      console.log("Attempting to reconnect, attempt:", attemptNumber);
+      // console.log("Attempting to reconnect, attempt:", attemptNumber);
       setReconnectAttempts(attemptNumber);
     });
 
@@ -404,12 +404,12 @@ function Chat({ buyerId }) {
     newSocket.on("room-switched", handleRoomSwitched);
     newSocket.on("receive-message", handleReceiveMessage);
     newSocket.on("auto-connected", (data) => {
-      console.log("Auto-connected:", data);
+      // console.log("Auto-connected:", data);
       setActiveBuyerId(data.buyerId);
     });
 
     return () => {
-      console.log("Cleaning up socket connection");
+      // console.log("Cleaning up socket connection");
       newSocket.disconnect();
     };
   }, [
@@ -435,11 +435,11 @@ function Chat({ buyerId }) {
       return;
     }
 
-    console.log("Attempting to join room with:", {
-      itemId: productId_state,
-      userType: userRole,
-      buyerId: actualBuyerId_state,
-    });
+    // console.log("Attempting to join room with:", {
+    //   itemId: productId_state,
+    //   userType: userRole,
+    //   buyerId: actualBuyerId_state,
+    // });
 
     socket.emit("join room", {
       itemId: productId_state,
@@ -449,12 +449,12 @@ function Chat({ buyerId }) {
   };
 
   const handleRoomJoined = (data) => {
-    console.log("Successfully joined room:", data);
+    // console.log("Successfully joined room:", data);
     setRoomId(data.roomId);
 
     // Only set messages from socket if we don't have historical messages loaded
     if (data.messages && data.messages.length > 0 && messages.length === 0) {
-      console.log("Setting messages from room join:", data.messages);
+      // console.log("Setting messages from room join:", data.messages);
       // Ensure all message IDs are parsed consistently
       const formattedMessages = data.messages.map((msg) => ({
         ...msg,
@@ -473,14 +473,14 @@ function Chat({ buyerId }) {
   };
 
   const handleRoomSwitched = (data) => {
-    console.log("Room switched:", data);
+    // console.log("Room switched:", data);
     setRoomId(data.roomId);
     // Don't clear messages immediately, let them load from HTTP
     // setMessages([]);
   };
 
   const handleReceiveMessage = (data) => {
-    console.log("Received new message:", data);
+    // console.log("Received new message:", data);
 
     // Ensure the message has consistent format with proper ID parsing
     const formattedMessage = {
@@ -490,7 +490,7 @@ function Chat({ buyerId }) {
       timestamp: data.timestamp || new Date().toISOString(),
     };
 
-    console.log("Formatted message:", formattedMessage);
+    // console.log("Formatted message:", formattedMessage);
 
     setMessages((prevMessages) => {
       // Prevent duplicate messages
@@ -502,14 +502,14 @@ function Chat({ buyerId }) {
       );
 
       if (existingMessage) {
-        console.log("Duplicate message detected, skipping");
+        // console.log("Duplicate message detected, skipping");
         return prevMessages;
       }
 
       const newMessages = Array.isArray(prevMessages)
         ? [...prevMessages, formattedMessage]
         : [formattedMessage];
-      console.log("Updated messages array:", newMessages);
+      // console.log("Updated messages array:", newMessages);
       return newMessages;
     });
 
@@ -523,11 +523,11 @@ function Chat({ buyerId }) {
     e.preventDefault();
 
     if (!messageInput.trim() || !socket || !roomId) {
-      console.warn("Cannot send message:", {
-        hasMessage: !!messageInput.trim(),
-        hasSocket: !!socket,
-        hasRoom: !!roomId,
-      });
+      // console.warn("Cannot send message:", {
+      //   hasMessage: !!messageInput.trim(),
+      //   hasSocket: !!socket,
+      //   hasRoom: !!roomId,
+      // });
       return;
     }
 
@@ -539,7 +539,7 @@ function Chat({ buyerId }) {
       timestamp: new Date().toISOString(),
     };
 
-    console.log("Sending message:", messageData);
+    // console.log("Sending message:", messageData);
     socket.emit("send-message", messageData);
 
     setMessageInput("");
@@ -650,12 +650,12 @@ function Chat({ buyerId }) {
                       const currentUserId = parseInt(userId);
                       const isCurrentUser = msgSenderId === currentUserId;
 
-                      console.log("Message debug:", {
-                        msgSenderId,
-                        currentUserId,
-                        isCurrentUser,
-                        originalMsg: msg,
-                      });
+                      // console.log("Message debug:", {
+                      //   msgSenderId,
+                      //   currentUserId,
+                      //   isCurrentUser,
+                      //   originalMsg: msg,
+                      // });
 
                       return (
                         <div

@@ -30,7 +30,7 @@ const CategoryProductsPage = () => {
                 throw new Error('Network response was not ok');
             }
             const data = await res.json();
-            console.log(data);
+            // console.log(data);
             setProducts(data);
             setFilteredProducts(data);
         } catch (error) {
@@ -71,7 +71,7 @@ const CategoryProductsPage = () => {
 
   const parseImageUrl = (imageUrl) => {
     if (!imageUrl) {
-      console.warn("imageUrl is null or undefined");
+      // console.warn("imageUrl is null or undefined");
       return [];
     }
 
@@ -86,33 +86,33 @@ const CategoryProductsPage = () => {
           .trim();
 
         const parsed = JSON.parse(cleanedUrlString);
-        console.log("Parsed URLs:", parsed);
+        // console.log("Parsed URLs:", parsed);
         return Array.isArray(parsed) ? parsed : [parsed];
       } catch (e) {
-        console.warn("JSON parse failed for:", urlString, e.message);
+        // console.warn("JSON parse failed for:", urlString, e.message);
         const urlMatches = urlString.match(/https?:\/\/[^\s"',\]]+/g);
         if (urlMatches && urlMatches.length > 0) {
-          console.log("Extracted URLs with regex:", urlMatches);
+          // console.log("Extracted URLs with regex:", urlMatches);
           return urlMatches;
         }
-        console.log("Treating as single URL:", urlString);
+        // console.log("Treating as single URL:", urlString);
         return [urlString];
       }
     }
 
     if (Array.isArray(urlString)) {
-      console.log("imageUrl is already an array:", urlString);
+      // console.log("imageUrl is already an array:", urlString);
       return urlString;
     }
 
-    console.warn("imageUrl is not a string or array:", urlString);
+    // console.warn("imageUrl is not a string or array:", urlString);
     return [urlString]; 
   };
 
   const getFirstImageUrl = (imageUrl) => {
     const parsedUrls = parseImageUrl(imageUrl);
     const firstUrl = parsedUrls.length > 0 ? parsedUrls[0] : "";
-    console.log("First image URL:", firstUrl);
+    // console.log("First image URL:", firstUrl);
     return firstUrl;
   };
 

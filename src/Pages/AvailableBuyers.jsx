@@ -18,7 +18,7 @@ function AvailableBuyers() {
     // Enhanced logging function
     const logDebug = (step, data) => {
         const timestamp = new Date().toISOString();
-        console.log(`[${timestamp}] ${step}:`, data);
+        // console.log(`[${timestamp}] ${step}:`, data);
         setDebugInfo(prev => ({
             ...prev,
             [step]: { timestamp, data }

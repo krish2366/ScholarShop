@@ -29,7 +29,7 @@ const Post = () => {
     setError("");
 
     const token = localStorage.getItem("accessToken");
-    console.log("Retrieved token:", token);
+    // console.log("Retrieved token:", token);
     if (!token) {
       setError("Please log in to add an item.");
       setIsSubmitting(false);
@@ -48,20 +48,20 @@ const Post = () => {
     formData.append("price", parseFloat(price));
     formData.append("category", category);
     photos.forEach((photo, index) => {
-      console.log(`Appending image ${index}:`, photo.name, photo.type, photo.size);
+      // console.log(`Appending image ${index}:`, photo.name, photo.type, photo.size);
       formData.append("images", photo); // Changed field name to "images"
     });
 
-    console.log("FormData entries:");
+    // console.log("FormData entries:");
     for (let pair of formData.entries()) {
-      console.log(`${pair[0]}:`, pair[1]);
+      // console.log(`${pair[0]}:`, pair[1]);
     }
 
     try {
       const headers = {
         Authorization: `Bearer ${token.trim()}`,
       };
-      console.log("Request headers:", headers);
+      // console.log("Request headers:", headers);
 
       const res = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/item/add-item`, {
         method: "POST",
@@ -77,7 +77,7 @@ const Post = () => {
       }
 
       const resData = await res.json();
-      console.log("Add item response:", resData);
+      // console.log("Add item response:", resData);
 
       if (res.ok) {
         navigate("/");

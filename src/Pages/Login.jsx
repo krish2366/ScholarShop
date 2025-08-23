@@ -35,7 +35,7 @@ function Login() {
       });
       
       const resData = await res.json();
-      console.log(resData);
+      // console.log(resData);
 
       if(resData.success){
         localStorage.setItem("accessToken",resData.accessToken);
@@ -46,7 +46,7 @@ function Login() {
       }
 
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       setError("Something went wrong. Please try again.");
     }finally{
       setIsLoggingIn(false);

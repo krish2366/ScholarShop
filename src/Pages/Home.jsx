@@ -17,7 +17,7 @@ const Home = () => {
     fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/item/get-all-items`)
       .then((res) => res.json())
       .then((data) => {
-        console.log("API response:", data);
+        // console.log("API response:", data);
         if (Array.isArray(data)) {
           setProducts(data.slice(0,8));
           setLoading(false);
@@ -30,7 +30,7 @@ const Home = () => {
 
   const parseImageUrl = (imageUrl) => {
     if (!imageUrl) {
-      console.warn("imageUrl is null or undefined");
+      // console.warn("imageUrl is null or undefined");
       return [];
     }
 
@@ -45,33 +45,33 @@ const Home = () => {
           .trim();
 
         const parsed = JSON.parse(cleanedUrlString);
-        console.log("Parsed URLs:", parsed);
+        // console.log("Parsed URLs:", parsed);
         return Array.isArray(parsed) ? parsed : [parsed];
       } catch (e) {
-        console.warn("JSON parse failed for:", urlString, e.message);
+        // console.warn("JSON parse failed for:", urlString, e.message);
         const urlMatches = urlString.match(/https?:\/\/[^\s"',\]]+/g);
         if (urlMatches && urlMatches.length > 0) {
-          console.log("Extracted URLs with regex:", urlMatches);
+          // console.log("Extracted URLs with regex:", urlMatches);
           return urlMatches;
         }
-        console.log("Treating as single URL:", urlString);
+        // console.log("Treating as single URL:", urlString);
         return [urlString];
       }
     }
 
     if (Array.isArray(urlString)) {
-      console.log("imageUrl is already an array:", urlString);
+      // console.log("imageUrl is already an array:", urlString);
       return urlString;
     }
 
-    console.warn("imageUrl is not a string or array:", urlString);
+    // console.warn("imageUrl is not a string or array:", urlString);
     return [urlString]; 
   };
 
   const getFirstImageUrl = (imageUrl) => {
     const parsedUrls = parseImageUrl(imageUrl);
     const firstUrl = parsedUrls.length > 0 ? parsedUrls[0] : "";
-    console.log("First image URL:", firstUrl);
+    // console.log("First image URL:", firstUrl);
     return firstUrl;
   };
 
@@ -188,7 +188,7 @@ const Home = () => {
                 </h3>
                 <p className="text-gray-600">Handpicked deals from your campus community</p>
               </div>
-              <Link to="/category/Electronics" className="hidden sm:flex items-center gap-2 text-[#F47C26] font-semibold hover:gap-4 transition-all group">
+              <Link to="/category/All" className="hidden sm:flex items-center gap-2 text-[#F47C26] font-semibold hover:gap-4 transition-all group">
                 View All
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>

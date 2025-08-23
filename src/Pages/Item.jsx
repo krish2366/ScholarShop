@@ -30,9 +30,9 @@ function Item() {
             try {
               productData.imageUrl = JSON.parse(productData.imageUrl);
             } catch (e) {
-              console.log(
-                "Direct JSON parse failed, trying alternative parsing..."
-              );
+              // console.log(
+              //   "Direct JSON parse failed, trying alternative parsing..."
+              // );
               try {
                 let cleanedImageUrl = productData.imageUrl
                   .replace(/\\/g, "")
@@ -54,7 +54,7 @@ function Item() {
                 );
                 if (urlMatches && urlMatches.length > 0) {
                   productData.imageUrl = urlMatches;
-                  console.log("Extracted URLs using regex:", urlMatches);
+                  // console.log("Extracted URLs using regex:", urlMatches);
                 } else {
                   productData.imageUrl = [productData.imageUrl];
                 }
@@ -68,7 +68,7 @@ function Item() {
         }
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         setError(err.message);
       });
   }, [id]);

@@ -23,7 +23,7 @@ export default function Profile() {
         const resData = await res.json();
         if (resData.success) setUser(resData.data);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
     };
     fetchProfile();
