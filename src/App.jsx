@@ -26,6 +26,8 @@ import AdminAuditLogs from './Pages/admin/AdminAuditLogs.jsx';
 import AdminProtectedRoute from './Components/AdminProtectedRoute.jsx';
 import MaintenancePage from './Pages/MaintenancePage.jsx';
 import AdminFeedback from './Pages/admin/AdminFeedback.jsx';  
+import ProtectedRoutes from './Components/ProtectedRoutes.jsx';
+import NotFoundPage from './Pages/NotFound.jsx';
 
 function App() {
 
@@ -38,12 +40,14 @@ function App() {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
-        <Route path="/post" element={<Post />} />
-        <Route path="/feedback" element={<FeedbackPage />} />
-        <Route path="/update-item/:itemId" element={<UpdateItem/>} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/availableBuyers/:itemId" element={<AvailableBuyers setBuyerId={setBuyerId} />} />
-        <Route path="/chat/:sellerId/:productId" element={<Chat buyerId={buyerId} />} />
+        <Route element = {<ProtectedRoutes/>} >
+          <Route path="/post" element={<Post />} />
+          <Route path="/feedback" element={<FeedbackPage />} />
+          <Route path="/update-item/:itemId" element={<UpdateItem/>} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/availableBuyers/:itemId" element={<AvailableBuyers setBuyerId={setBuyerId} />} />
+          <Route path="/chat/:sellerId/:productId" element={<Chat buyerId={buyerId} />} />
+        </Route>
         <Route path="/item/:id" element={<Item/>} />
         <Route path="/category/:category" element={<CategoryProductsPage/>} />
         <Route path="/auth/success" element={<AuthSuccess />} />
@@ -95,7 +99,7 @@ function App() {
         {/* Maintenance Page */}
         <Route path="/maintenance" element={<MaintenancePage />} />
 
-        <Route path="*" element={<div>404 page not found</div>} />
+        <Route path="*" element={<NotFoundPage/>} />
       </Routes>
     </Router>
   )

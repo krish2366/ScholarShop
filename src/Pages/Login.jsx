@@ -40,7 +40,7 @@ function Login() {
       if(resData.success){
         localStorage.setItem("accessToken",resData.accessToken);
         localStorage.setItem("userId",resData.user.id);
-        navigate("/");
+        window.location.href = "/";
       }else{
         setError(resData.message || "Invalid credentials");
       }

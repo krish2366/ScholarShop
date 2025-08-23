@@ -198,7 +198,7 @@ function Chat({ buyerId }) {
         let userResponse;
         try {
           userResponse = await fetch(
-            `${import.meta.env.VITE_MAIN_BACKEND_URL}/user/${userId}`,
+            `${import.meta.env.VITE_MAIN_BACKEND_URL}/auth/user/${userId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }

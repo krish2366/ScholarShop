@@ -57,7 +57,7 @@ function Signup() {
         if(resData.success){
           localStorage.setItem("accessToken", resData.accessToken);
           localStorage.setItem("userId", resData.user.id);
-          navigate("/");
+          window.location.href = "/";
         }
       } catch (error) {
         // console.log(error)
