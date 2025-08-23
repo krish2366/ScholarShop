@@ -304,7 +304,7 @@ function Item() {
             {product.userId == userId ? (
               <>
 
-                {isAvailable ?? <button
+                {isAvailable && <button
                   className="w-full mt-4 block text-center bg-[#F47C26] text-white py-2 rounded-lg font-semibold hover:bg-orange-600 transition"
                   onClick={senderClick}
                 >
@@ -329,7 +329,7 @@ function Item() {
                   </button>
                 )}
 
-                {isAvailable ?? <Link
+                {isAvailable && <Link
                   to={`/update-item/${id}`}
                   className="w-full mt-4 block text-center bg-[#F47C26] text-white py-2 rounded-lg font-semibold hover:bg-orange-600 transition"
                 >
