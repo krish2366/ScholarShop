@@ -10,12 +10,22 @@ function UpdateItem() {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
-  const [photos, setPhotos] = useState([]); 
-  const [existingPhotos, setExistingPhotos] = useState([]); 
+  const [photos, setPhotos] = useState([]);
+  const [existingPhotos, setExistingPhotos] = useState([]);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Frontend validation limits based on itemModel
+  const LIMITS = {
+    TITLE_MAX: 255, // Default STRING length in Sequelize
+    DESCRIPTION_MAX: 255, // From your model
+    IMAGE_SIZE_MAX: 8 * 1024 * 1024, // 8MB
+    MAX_IMAGES: 4
+  };
+
+  const categories = ['Electronics', 'Books', 'PYQs', 'Instruments', 'Essentials', 'OTHERS'];
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -36,8 +46,15 @@ function UpdateItem() {
           setDescription(item.description);
           setPrice(item.price);
           setCategory(item.category);
-          setExistingPhotos([item.imageUrl]); 
-          const loggedInUserId = localStorage.getItem("userId"); 
+          
+          // Handle existing photos properly
+          if (Array.isArray(item.imageUrl)) {
+            setExistingPhotos(item.imageUrl);
+          } else {
+            setExistingPhotos([item.imageUrl]);
+          }
+          
+          const loggedInUserId = localStorage.getItem("userId");
           setIsOwner(item.userId === parseInt(loggedInUserId));
         } else {
           setError(data.message || "Item not found.");
@@ -52,11 +69,36 @@ function UpdateItem() {
 
   const handlePhotoChange = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length + photos.length + existingPhotos.length > 4) {
-      setError("You can upload up to 4 photos total.");
+    const maxSize = LIMITS.IMAGE_SIZE_MAX;
+    
+    // Check file sizes
+    const oversizedFiles = files.filter(file => file.size > maxSize);
+    if (oversizedFiles.length > 0) {
+      setError(`These files exceed 8MB limit: ${oversizedFiles.map(f => f.name).join(', ')}`);
       return;
     }
+    
+    if (files.length + photos.length + existingPhotos.length > LIMITS.MAX_IMAGES) {
+      setError(`You can upload up to ${LIMITS.MAX_IMAGES} photos total.`);
+      return;
+    }
+
     setPhotos((prev) => [...prev, ...files]);
+    setError("");
+  };
+
+  const removePhoto = (indexToRemove) => {
+    setPhotos(prev => prev.filter((_, index) => index !== indexToRemove));
+    setError("");
+  };
+
+  const removeExistingPhoto = (indexToRemove) => {
+    setExistingPhotos(prev => prev.filter((_, index) => index !== indexToRemove));
+    setError("");
+  };
+
+  const clearAllNewPhotos = () => {
+    setPhotos([]);
     setError("");
   };
 
@@ -64,6 +106,39 @@ function UpdateItem() {
     e.preventDefault();
     setIsSubmitting(true);
     setError("");
+
+    // Frontend validation
+    if (title.length === 0 || title.length > LIMITS.TITLE_MAX) {
+      setError(`Title must be between 1 and ${LIMITS.TITLE_MAX} characters.`);
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (description.length === 0 || description.length > LIMITS.DESCRIPTION_MAX) {
+      setError(`Description must be between 1 and ${LIMITS.DESCRIPTION_MAX} characters.`);
+      setIsSubmitting(false);
+      return;
+    }
+
+    const priceNum = parseFloat(price);
+    if (isNaN(priceNum) || priceNum <= 0) {
+      setError("Please enter a valid price greater than ₹0.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!category || !categories.includes(category)) {
+      setError("Please select a valid category.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Check if at least one photo exists (existing or new)
+    if (existingPhotos.length === 0 && photos.length === 0) {
+      setError("Please keep at least one photo.");
+      setIsSubmitting(false);
+      return;
+    }
 
     const token = localStorage.getItem("accessToken");
     if (!token) {
@@ -75,20 +150,28 @@ function UpdateItem() {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("price", parseFloat(price));
+    formData.append("price", priceNum);
     formData.append("category", category);
-    photos.forEach((photo) => formData.append("images", photo)); // Changed from "photos" to "images"
+    
+    // Send the remaining existing photos (the ones user wants to keep)
+    formData.append("keepExistingImages", JSON.stringify(existingPhotos));
+
+    // Add new photos
+    photos.forEach((photo) => {
+      formData.append("images", photo);
+    });
 
     try {
       const res = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/item/update-item/${itemId}`, {
-        method: "PUT", 
+        method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 
       const resData = await res.json();
+
       if (res.ok) {
-        navigate(`/item/${itemId}`); // Redirect to item details on success
+        navigate(`/item/${itemId}`);
       } else {
         setError(resData.message || "Failed to update item.");
       }
@@ -100,109 +183,206 @@ function UpdateItem() {
     }
   };
 
-  if (isLoading) return <div className="text-center py-20 text-[#333333]">Loading...</div>;
-  if (!isOwner) return <div className="text-center py-20 text-[#333333]">You are not authorized to edit this item.</div>;
-
-  return (
-    <div className="min-h-screen bg-[#FFF4DC] flex flex-col">
-      <Navbar />
-      <div className="container mx-auto px-6 py-16 md:py-24 flex flex-col md:flex-row justify-center gap-10">
-        {/* Photo Upload Section */}
-        <div className="w-full md:w-1/2 bg-white p-8 rounded-lg shadow-lg flex flex-col items-center justify-center">
-          <h2 className="text-2xl font-bold text-[#F47C26] mb-6">Update Photos</h2>
-          <div className="border-2 border-dashed border-[#333333] rounded-lg p-10 flex flex-col items-center">
-            <img src={camera} alt="camera" className="h-20 w-20 mb-4" />
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handlePhotoChange}
-              className="hidden"
-              id="photo-upload"
-            />
-            <label
-              htmlFor="photo-upload"
-              className="bg-[#F47C26] text-white px-6 py-2 rounded-md font-semibold hover:bg-orange-600 transition cursor-pointer"
-            >
-              Upload New Photos
-            </label>
-            <p className="text-[#333333] mt-2">Upload up to 4 photos total</p>
-            {existingPhotos.length > 0 && (
-              <div className="mt-4">
-                <p className="text-[#333333]">Current Photo:</p>
-                <img src={existingPhotos[0]} alt="Current" className="h-20 w-20 object-cover mt-2" />
-              </div>
-            )}
-            {photos.length > 0 && (
-              <ul className="mt-4 text-[#333333]">
-                {photos.map((photo, index) => (
-                  <li key={index}>{photo.name}</li>
-                ))}
-              </ul>
-            )}
+  if (isLoading) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-orange-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading item details...</p>
           </div>
         </div>
+      </>
+    );
+  }
 
-        {/* Form Section */}
-        <div className="w-full md:w-1/2 bg-white p-8 rounded-lg shadow-lg">
-          <h2 className="text-3xl font-bold text-[#F47C26] text-center mb-6">
-            Update Item
-          </h2>
-          <form onSubmit={handleSubmit}>
-            <input
-              className="w-full px-4 py-2 border rounded-lg mb-4 font-bold placeholder-gray-500"
-              type="text"
-              placeholder="Item Title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-            <textarea
-              className="w-full px-4 py-2 border rounded-lg mb-4 font-bold placeholder-gray-500"
-              placeholder="Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows="4"
-              required
-            />
-            <input
-              className="w-full px-4 py-2 border rounded-lg mb-4 font-bold placeholder-gray-500"
-              type="number"
-              placeholder="Price (₹)"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              step="0.01"
-              required
-            />
-            <select
-              className="w-full px-4 py-2 border rounded-lg mb-4 font-bold text-gray-500"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
-            >
-              <option value="" disabled>
-                Select Category
-              </option>
-              <option value="Books">Books</option>
-              <option value="Notes">Notes</option>
-              <option value="Drafter">Drafter</option>
-              <option value="Essentials">Essentials</option>
-              <option value="PYQs">PYQs</option>
-            </select>
-            {error && (
-              <p className="text-red-500 text-sm text-center mb-4">{error}</p>
-            )}
-            <button
-              type="submit"
-              className="w-full bg-[#F47C26] text-white py-2 rounded-lg hover:bg-orange-600 transition disabled:opacity-50"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Updating..." : "Update Item"}
-            </button>
-          </form>
+  if (!isOwner) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-orange-50 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-red-600">Access Denied</h1>
+            <p className="mt-2 text-gray-600">You don't have permission to edit this item.</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  const totalPhotos = existingPhotos.length + photos.length;
+
+  return (
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-orange-50 p-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Photo Upload Section */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-2xl font-semibold text-orange-600 mb-4">Update Photos</h2>
+              
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                <img src={camera} alt="Camera" className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                
+                <input
+                  type="file"
+                  id="photo-upload"
+                  multiple
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="photo-upload"
+                  className="cursor-pointer inline-block bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors"
+                >
+                  Upload Additional Photos
+                </label>
+                <p className="text-sm text-gray-600 mt-2">
+                  Total: {totalPhotos}/{LIMITS.MAX_IMAGES} photos (max 8MB each)
+                </p>
+              </div>
+
+              {/* Display existing photos */}
+              {existingPhotos.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  <p className="text-sm font-medium text-blue-700">Current Photos ({existingPhotos.length}):</p>
+                  {existingPhotos.map((photo, index) => (
+                    <div key={`existing-${index}`} className="flex items-center justify-between bg-blue-50 p-3 rounded-lg border border-blue-200">
+                      <div className="flex-1">
+                        <span className="text-sm font-medium">Existing photo {index + 1}</span>
+                        <span className="text-xs text-blue-600 block">Currently saved</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeExistingPhoto(index)}
+                        className="ml-3 text-red-500 hover:text-red-700 font-bold text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50"
+                        title="Remove existing photo"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Display newly selected photos */}
+              {photos.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  <p className="text-sm font-medium text-green-700">New Photos ({photos.length}):</p>
+                  {photos.map((photo, index) => (
+                    <div key={`new-${index}`} className="flex items-center justify-between bg-green-50 p-3 rounded-lg border border-green-200">
+                      <div className="flex-1">
+                        <span className="text-sm font-medium truncate block">{photo.name}</span>
+                        <span className="text-xs text-green-600">
+                          {(photo.size / 1024 / 1024).toFixed(2)} MB - Will be uploaded
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removePhoto(index)}
+                        className="ml-3 text-red-500 hover:text-red-700 font-bold text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50"
+                        title="Remove new photo"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={clearAllNewPhotos}
+                    className="text-sm text-red-500 hover:text-red-700 font-medium"
+                  >
+                    Clear all new photos
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Form Section */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-2xl font-semibold text-orange-600 mb-4">Update Item Details</h2>
+              
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Item Title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    maxLength={LIMITS.TITLE_MAX}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {title.length}/{LIMITS.TITLE_MAX} characters
+                  </p>
+                </div>
+
+                <div>
+                  <textarea
+                    placeholder="Description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows="4"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-vertical"
+                    maxLength={LIMITS.DESCRIPTION_MAX}
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    {description.length}/{LIMITS.DESCRIPTION_MAX} characters
+                  </p>
+                </div>
+
+                <div>
+                  <input
+                    type="number"
+                    placeholder="Price (₹)"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    step="0.01"
+                    min="0.01"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Enter price in ₹ (minimum ₹0.01)
+                  </p>
+                </div>
+
+                <div>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {error && (
+                  <div className="text-red-500 text-sm bg-red-50 p-3 rounded-lg">
+                    {error}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-orange-500 text-white py-3 rounded-lg font-medium hover:bg-orange-600 disabled:bg-orange-300 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isSubmitting ? "Updating Item..." : "Update Item"}
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
