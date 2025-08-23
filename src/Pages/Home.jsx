@@ -181,14 +181,14 @@ const Home = () => {
 
         <div className="bg-white py-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-10">
-            <div className="flex items-center justify-between mb-12">
+            <div className="flex-col md:flex items-center justify-between mb-12">
               <div>
                 <h3 className="text-3xl sm:text-4xl font-bold text-[#333333] mb-2">
                   Featured Products
                 </h3>
                 <p className="text-gray-600">Handpicked deals from your campus community</p>
               </div>
-              <Link to="/category/All" className="hidden sm:flex items-center gap-2 text-[#F47C26] font-semibold hover:gap-4 transition-all group">
+              <Link to="/category/All" className="mt-2 md:mt-0 flex items-center gap-2 text-[#F47C26] font-semibold hover:gap-4 transition-all group">
                 View All
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
