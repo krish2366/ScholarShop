@@ -25,6 +25,7 @@ import AdminNotifications from './Pages/admin/AdminNotifications.jsx';
 import AdminAuditLogs from './Pages/admin/AdminAuditLogs.jsx';
 import AdminProtectedRoute from './Components/AdminProtectedRoute.jsx';
 import MaintenancePage from './Pages/MaintenancePage.jsx';
+import AdminFeedback from './Pages/admin/AdminFeedback.jsx';  
 
 function App() {
 
@@ -89,6 +90,7 @@ function App() {
             <AdminAuditLogs />
           </AdminProtectedRoute>
         } />
+        <Route path="/admin/feedback" element={<AdminFeedback />} />
         
         {/* Maintenance Page */}
         <Route path="/maintenance" element={<MaintenancePage />} />
