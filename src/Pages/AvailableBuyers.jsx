@@ -231,7 +231,7 @@ function AvailableBuyers() {
                     <div className="mt-6 text-center">
                         <button 
                             onClick={() => navigate(`/item/${itemId}`)}
-                            className="bg-[#F47C26] text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors mr-4"
+                            className="bg-[#F47C26] text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors mb-2 md:mr-4"
                         >
                             Back to Item
                         </button>
