@@ -244,7 +244,7 @@ export default function Profile() {
                           <img
                             src={getFirstImageUrl(item.imageUrl)}
                             alt={item.title || `Item ${index + 1}`}
-                            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                            className="w-full h-full object-contain transition-transform duration-300 hover:scale-105"
                             onError={(e) => {
                               e.target.src =
                                 "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzlhYTJhOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==";

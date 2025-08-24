@@ -223,7 +223,7 @@ const CategoryProductsPage = () => {
                 }`}
               >
                 <img
-                  className={`object-cover ${
+                  className={`object-contain ${
                     viewMode === 'list' ? 'w-48 h-32' : 'w-full h-48'
                   }`}
                   src={getFirstImageUrl(product.imageUrl)}

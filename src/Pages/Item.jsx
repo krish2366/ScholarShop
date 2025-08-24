@@ -264,7 +264,7 @@ function Item() {
                     key={index}
                     src={imageUrl}
                     alt={`${product.title} ${index + 1}`}
-                    className={`w-20 h-20 object-cover rounded cursor-pointer transition
+                    className={`w-20 h-20 object-contain rounded cursor-pointer transition
                     ${
                       index === currentImageIndex
                         ? "border-2 border-[#F47C26]"
