@@ -18,7 +18,7 @@ const Post = () => {
     TITLE_MAX: 255, // Default STRING length in Sequelize
     DESCRIPTION_MAX: 255, // From your model
     PRICE_MAX: 999999.99,
-    IMAGE_SIZE_MAX: 8 * 1024 * 1024, // 8MB
+    IMAGE_SIZE_MAX: 5 * 1024 * 1024, // 8MB
     MAX_IMAGES: 4
   };
 
@@ -169,7 +169,7 @@ const Post = () => {
                   Upload Photos
                 </label>
                 <p className="text-sm text-gray-600 mt-2">
-                  Upload up to {LIMITS.MAX_IMAGES} photos (max 8MB each)
+                  Upload up to {LIMITS.MAX_IMAGES} photos (max 5MB each)
                 </p>
               </div>
 

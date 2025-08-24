@@ -75,7 +75,7 @@ function Login() {
             <img src={google} alt="google" className="h-6" />
             <span className="text-[#333333]">Login with Google</span>
           </button>
-          <div className="flex justify-center mt-4">
+          {/* <div className="flex justify-center mt-4">
             <button
               className={`px-4 py-2 mx-2 rounded-md ${
                 useEmail ? "bg-[#F47C26] text-white" : "bg-gray-200 text-[#333333]"
@@ -92,7 +92,7 @@ function Login() {
             >
               Phone Login
             </button>
-          </div>
+          </div> */}
           <form className="mt-6" onSubmit={handleClick}>
             {useEmail ? (
               <input

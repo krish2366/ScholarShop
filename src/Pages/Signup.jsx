@@ -88,7 +88,7 @@ function Signup() {
             Sign Up for ScholarShop
           </h2>
 
-          <div className="flex justify-center mt-4">
+          {/* <div className="flex justify-center mt-4">
             <button
               className={`px-4 py-2 mx-2 rounded-md ${
                 useEmail ? "bg-[#F47C26] text-white" : "bg-gray-200 text-[#333333]"
@@ -105,7 +105,7 @@ function Signup() {
             >
               Phone Signup
             </button>
-          </div>
+          </div> */}
 
           <form className="mt-6" onSubmit={handleClick}>
 

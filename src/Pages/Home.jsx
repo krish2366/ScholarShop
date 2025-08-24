@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../Components/Navbar.jsx";
 import essentials from "../assets/essentials.webp";
-import Instruments from "../assets/instrument.jpg";
-import herosection from "../assets/herosection.jpg";
+import Instruments from "../assets/instrument.jpeg";
+import herosection from "../assets/herosection.jpeg";
 import Footer from "../Components/Footer.jsx";
 import { ArrowRight, ShoppingBag, Users, Shield, Star } from 'lucide-react';
 
@@ -140,7 +140,7 @@ const Home = () => {
             </div>
 
             <div className="w-full lg:w-2/5 lg:h-[23rem] hidden lg:block">
-              <img src={herosection} className="bg-gray-200 w-full h-full rounded-xl rounded-s-none" />
+              <img src={herosection} className="bg-gray-200 w-full h-full object-cover rounded-xl rounded-s-none" />
             </div>
           </div>
         </div>
@@ -181,7 +181,7 @@ const Home = () => {
 
         <div className="bg-white py-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-10">
-            <div className="flex-col md:flex items-center justify-between mb-12">
+            <div className="flex flex-col md:flex-row items-center justify-between mb-12">
               <div>
                 <h3 className="text-3xl sm:text-4xl font-bold text-[#333333] mb-2">
                   Featured Products
