@@ -9,6 +9,8 @@ import {
   MessageCircle,
   RefreshCw,
   AlertCircle,
+  MoreVertical,
+  Flag,
 } from "lucide-react";
 
 function Chat({ buyerId }) {
@@ -23,8 +25,6 @@ function Chat({ buyerId }) {
 
   const param1 = Object.values(params)[0];
   const param2 = Object.values(params)[1];
-
-  // console.log("URL Params:", { param1, param2, userId });
 
   // State management
   const [urlPattern, setUrlPattern] = useState(null);
@@ -43,7 +43,67 @@ function Chat({ buyerId }) {
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
   const [otherUserName, setOtherUserName] = useState("Other"); // Add this state
 
+  // Report functionality states
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportData, setReportData] = useState({
+    complaint: '',
+    type: 'harassment'
+  });
+  const [isReporting, setIsReporting] = useState(false);
+
   const chatBoxRef = useRef(null);
+
+  // Get other user ID for reporting
+  const getOtherUserId = () => {
+    if (userRole === "buyer" && itemInfo) {
+      return itemInfo.sellerId || itemInfo.userId;
+    } else if (userRole === "seller") {
+      return actualBuyerId_state;
+    }
+    return null;
+  };
+
+  // Handle report user
+  const handleReportUser = async () => {
+    const otherUserId = getOtherUserId();
+    if (!otherUserId) {
+      alert('Unable to determine user to report');
+      return;
+    }
+
+    setIsReporting(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_MAIN_BACKEND_URL}/user-report/report-user/${otherUserId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        },
+        body: JSON.stringify({
+          ...reportData,
+          itemId: productId_state,
+          roomId: roomId || `${productId_state}-${actualBuyerId_state}`
+        })
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert('User reported successfully');
+        setShowReportModal(false);
+        setReportData({ complaint: '', type: 'harassment' });
+        setShowDropdown(false);
+      } else {
+        alert(result.message || 'Failed to report user');
+      }
+    } catch (error) {
+      console.error('Error reporting user:', error);
+      alert('Failed to report user. Please try again.');
+    } finally {
+      setIsReporting(false);
+    }
+  };
 
   // Add function to fetch other user's name
   const fetchOtherUserName = async () => {
@@ -61,20 +121,8 @@ function Chat({ buyerId }) {
       }
 
       if (!otherUserId) {
-        // console.log("No otherUserId found:", {
-        //   userRole,
-        //   itemInfo,
-        //   actualBuyerId_state,
-        // });
         return;
       }
-
-      // console.log(
-      //   "Fetching username for user:",
-      //   otherUserId,
-      //   "| User role:",
-      //   userRole
-      // );
 
       // Use the correct route pattern: /user/:userId
       const response = await fetch(
@@ -87,19 +135,8 @@ function Chat({ buyerId }) {
         }
       );
 
-      // console.log("User endpoint response:", {
-      //   status: response.status,
-      //   ok: response.ok,
-      //   statusText: response.statusText,
-      //   url: `${
-      //     import.meta.env.VITE_MAIN_BACKEND_URL
-      //   }/auth/user/${otherUserId}`,
-      // });
-
       if (response.ok) {
         const userData = await response.json();
-        // console.log("Raw user data received:", userData);
-        // console.log("Available properties:", Object.keys(userData));
 
         // Fix: Access userName from the nested data object
         const userName =
@@ -108,12 +145,8 @@ function Chat({ buyerId }) {
           userData.userName ||
           userData.name ||
           `User ${otherUserId}`;
-        // console.log("Extracted username:", userName);
         setOtherUserName(userName);
       } else {
-        // console.log(
-        //   `User ${otherUserId} not found (${response.status}), using fallback name`
-        // );
         setOtherUserName(`User ${otherUserId}`);
       }
     } catch (error) {
@@ -134,10 +167,6 @@ function Chat({ buyerId }) {
       const token = localStorage.getItem("accessToken");
       if (!token || !productId_state || !actualBuyerId_state) return;
 
-      // console.log(
-      //   `Loading history for item: ${productId_state}, buyer: ${actualBuyerId_state}`
-      // );
-
       // Corrected URL:
       const response = await fetch(
         `${
@@ -151,10 +180,6 @@ function Chat({ buyerId }) {
 
       if (response.ok) {
         const historicalChats = await response.json();
-        // console.log(
-        //   "Filtered historical messages loaded from backend:",
-        //   historicalChats
-        // );
 
         const formattedMessages = historicalChats.map((chat) => ({
           id: chat.id,
@@ -165,7 +190,6 @@ function Chat({ buyerId }) {
           roomId: `${productId_state}-${actualBuyerId_state}`,
         }));
 
-        // console.log("Final formatted messages:", formattedMessages);
         setMessages(formattedMessages);
 
         // Scroll to bottom
@@ -225,13 +249,6 @@ function Chat({ buyerId }) {
             itemData = await response.json();
             const itemSellerId = parseInt(itemData.sellerId || itemData.userId);
 
-            // console.log("Item found with param1 as productId:", {
-            //   itemSellerId,
-            //   currentUserId: userId,
-            //   param1,
-            //   param2,
-            // });
-
             // If current user is the seller, this is seller pattern
             if (userId === itemSellerId) {
               detectedPattern = "seller";
@@ -240,7 +257,6 @@ function Chat({ buyerId }) {
               setUserRole("seller");
               setItemInfo(itemData);
               itemFound = true;
-              // console.log("Seller pattern confirmed");
             } else {
               // Current user is not the seller, so they might be the buyer
               // Check if param2 matches current user (buyer pattern)
@@ -251,7 +267,6 @@ function Chat({ buyerId }) {
                 setUserRole("buyer");
                 setItemInfo(itemData);
                 itemFound = true;
-                // console.log("Buyer pattern with param1 as productId");
               }
             }
           }
@@ -275,13 +290,6 @@ function Chat({ buyerId }) {
                 itemData.sellerId || itemData.userId
               );
 
-              // console.log("Item found with param2 as productId:", {
-              //   itemSellerId,
-              //   currentUserId: userId,
-              //   param1,
-              //   param2,
-              // });
-
               // If param1 matches sellerId, this is buyer pattern
               if (parseInt(param1) === itemSellerId) {
                 detectedPattern = "buyer";
@@ -290,7 +298,6 @@ function Chat({ buyerId }) {
                 setUserRole("buyer");
                 setItemInfo(itemData);
                 itemFound = true;
-                // console.log("Buyer pattern confirmed");
               }
             }
           } catch (err) {
@@ -300,24 +307,19 @@ function Chat({ buyerId }) {
 
         if (itemFound) {
           setUrlPattern(detectedPattern);
-          // console.log(`Pattern detected: ${detectedPattern}`);
         } else {
           // Fallback: Make educated guess based on typical patterns
-          // console.log("No item found, making educated guess...");
-
           // Assume seller pattern if param2 looks like a user ID
           if (userId && (userId === parseInt(param1) || param2.length < 10)) {
             setUrlPattern("seller");
             setProductId(param1);
             setActualBuyerId(parseInt(param2));
             setUserRole("seller");
-            // console.log("Fallback: Assuming seller pattern");
           } else {
             setUrlPattern("buyer");
             setProductId(param2);
             setActualBuyerId(userId);
             setUserRole("buyer");
-            // console.log("Fallback: Assuming buyer pattern");
           }
         }
       } catch (error) {
@@ -355,8 +357,6 @@ function Chat({ buyerId }) {
       return;
     }
 
-    // console.log("Setting up socket connection...");
-
     // Establish socket connection
     const newSocket = io(import.meta.env.VITE_CHAT_BACKEND_URL, {
       auth: { token },
@@ -367,21 +367,18 @@ function Chat({ buyerId }) {
     });
 
     newSocket.on("connect", () => {
-      // console.log("Socket connected successfully");
       setSocket(newSocket);
       setReconnectAttempts(0);
       joinRoom(newSocket);
     });
 
     newSocket.on("reconnect", (attemptNumber) => {
-      // console.log("Socket reconnected after", attemptNumber, "attempts");
       setReconnectAttempts(0);
       // Reload historical messages on reconnect
       loadHistoricalMessages();
     });
 
     newSocket.on("reconnect_attempt", (attemptNumber) => {
-      // console.log("Attempting to reconnect, attempt:", attemptNumber);
       setReconnectAttempts(attemptNumber);
     });
 
@@ -404,12 +401,10 @@ function Chat({ buyerId }) {
     newSocket.on("room-switched", handleRoomSwitched);
     newSocket.on("receive-message", handleReceiveMessage);
     newSocket.on("auto-connected", (data) => {
-      // console.log("Auto-connected:", data);
       setActiveBuyerId(data.buyerId);
     });
 
     return () => {
-      // console.log("Cleaning up socket connection");
       newSocket.disconnect();
     };
   }, [
@@ -435,12 +430,6 @@ function Chat({ buyerId }) {
       return;
     }
 
-    // console.log("Attempting to join room with:", {
-    //   itemId: productId_state,
-    //   userType: userRole,
-    //   buyerId: actualBuyerId_state,
-    // });
-
     socket.emit("join room", {
       itemId: productId_state,
       userType: userRole,
@@ -449,12 +438,10 @@ function Chat({ buyerId }) {
   };
 
   const handleRoomJoined = (data) => {
-    // console.log("Successfully joined room:", data);
     setRoomId(data.roomId);
 
     // Only set messages from socket if we don't have historical messages loaded
     if (data.messages && data.messages.length > 0 && messages.length === 0) {
-      // console.log("Setting messages from room join:", data.messages);
       // Ensure all message IDs are parsed consistently
       const formattedMessages = data.messages.map((msg) => ({
         ...msg,
@@ -473,15 +460,10 @@ function Chat({ buyerId }) {
   };
 
   const handleRoomSwitched = (data) => {
-    // console.log("Room switched:", data);
     setRoomId(data.roomId);
-    // Don't clear messages immediately, let them load from HTTP
-    // setMessages([]);
   };
 
   const handleReceiveMessage = (data) => {
-    // console.log("Received new message:", data);
-
     // Ensure the message has consistent format with proper ID parsing
     const formattedMessage = {
       ...data,
@@ -489,8 +471,6 @@ function Chat({ buyerId }) {
       userId: parseInt(data.userId || data.senderId),
       timestamp: data.timestamp || new Date().toISOString(),
     };
-
-    // console.log("Formatted message:", formattedMessage);
 
     setMessages((prevMessages) => {
       // Prevent duplicate messages
@@ -502,14 +482,12 @@ function Chat({ buyerId }) {
       );
 
       if (existingMessage) {
-        // console.log("Duplicate message detected, skipping");
         return prevMessages;
       }
 
       const newMessages = Array.isArray(prevMessages)
         ? [...prevMessages, formattedMessage]
         : [formattedMessage];
-      // console.log("Updated messages array:", newMessages);
       return newMessages;
     });
 
@@ -523,11 +501,6 @@ function Chat({ buyerId }) {
     e.preventDefault();
 
     if (!messageInput.trim() || !socket || !roomId) {
-      // console.warn("Cannot send message:", {
-      //   hasMessage: !!messageInput.trim(),
-      //   hasSocket: !!socket,
-      //   hasRoom: !!roomId,
-      // });
       return;
     }
 
@@ -539,7 +512,6 @@ function Chat({ buyerId }) {
       timestamp: new Date().toISOString(),
     };
 
-    // console.log("Sending message:", messageData);
     socket.emit("send-message", messageData);
 
     setMessageInput("");
@@ -602,35 +574,48 @@ function Chat({ buyerId }) {
   }
 
   return (
-    <section className=" h-screen">
+    <section className="h-screen">
       <Navbar />
       <section className="bg-[#FFF4DC] pb-5">
-        <h1 className="text-center text-3xl font-bold m-6 mt-0 pt-6">
-          Chat Section
-          {/* {itemInfo && (
-            <span className="block text-lg font-normal mt-2">
-              Item: {itemInfo.title}
-            </span>
-          )}
-          <span className="block text-sm font-normal text-gray-600">
-            You are: {userRole} | Pattern: {urlPattern}
-          </span>
-          <span className="block text-xs font-normal text-gray-500">
-            Product: {productId_state} | Buyer: {actualBuyerId_state}
-          </span>
-          {roomId && (
-            <span className="block text-xs font-normal text-gray-500">
-              Room: {roomId}
-            </span>
-          )}
-          <span className="block text-xs font-normal text-gray-400">
-            Messages: {messages.length} | Socket:{" "}
-            {socket?.connected ? "Connected" : "Disconnected"}
-          </span>
-          <span className="block text-xs font-normal text-gray-400">
-            Chatting with: {otherUserName}
-          </span> */}
-        </h1>
+        <div className="flex justify-between items-center px-4 sm:px-8">
+          <h1 className="text-center text-3xl font-bold m-6 mt-0 pt-6 flex-1">
+            Chat Section
+          </h1>
+          
+          {/* Report Button - Mobile Friendly */}
+          <div className="relative pt-6">
+            <button
+              onClick={() => setShowDropdown(!showDropdown)}
+              className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+              title="More options"
+            >
+              <MoreVertical className="h-5 w-5 text-gray-600" />
+            </button>
+            
+            {showDropdown && (
+              <>
+                {/* Backdrop for mobile */}
+                <div 
+                  className="fixed inset-0 z-10 sm:hidden" 
+                  onClick={() => setShowDropdown(false)}
+                ></div>
+                
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20 border">
+                  <button
+                    onClick={() => {
+                      setShowReportModal(true);
+                      setShowDropdown(false);
+                    }}
+                    className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-red-50 transition-colors text-sm"
+                  >
+                    <Flag className="mr-2 h-4 w-4" />
+                    Report {otherUserName}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
 
         <div className="max-w-4xl mx-auto h-screen px-4 py-6">
           <div className="bg-white h-full rounded-2xl shadow-xl overflow-hidden border border-gray-100">
@@ -650,13 +635,6 @@ function Chat({ buyerId }) {
                       const currentUserId = parseInt(userId);
                       const isCurrentUser = msgSenderId === currentUserId;
 
-                      // console.log("Message debug:", {
-                      //   msgSenderId,
-                      //   currentUserId,
-                      //   isCurrentUser,
-                      //   originalMsg: msg,
-                      // });
-
                       return (
                         <div
                           key={msg.id || index}
@@ -673,7 +651,6 @@ function Chat({ buyerId }) {
                                   ? "rounded-br-md bg-[#f7a367] "
                                   : "bg-white border border-gray-200 rounded-bl-md"
                               }`}
-                              
                             >
                               <p className="text-sm leading-relaxed break-words">
                                 {msg.message}
@@ -789,6 +766,64 @@ function Chat({ buyerId }) {
           </div>
         </div>
       </section>
+
+      {/* Report Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="p-4 sm:p-6">
+              <h3 className="text-lg font-semibold mb-4">Report {otherUserName}</h3>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Report Type</label>
+                <select
+                  value={reportData.type}
+                  onChange={(e) => setReportData(prev => ({ ...prev, type: e.target.value }))}
+                  className="w-full p-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                >
+                  <option value="harassment">Harassment</option>
+                  <option value="spam">Spam</option>
+                  <option value="inappropriate_behavior">Inappropriate Behavior</option>
+                  <option value="scam">Scam</option>
+                  <option value="fake_profile">Fake Profile</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              
+              <div className="mb-6">
+                <label className="block text-sm font-medium mb-2">Description</label>
+                <textarea
+                  value={reportData.complaint}
+                  onChange={(e) => setReportData(prev => ({ ...prev, complaint: e.target.value }))}
+                  placeholder="Please describe the issue..."
+                  className="w-full p-2 border rounded-md h-24 resize-none text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  required
+                />
+              </div>
+              
+              <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
+                <button
+                  onClick={() => {
+                    setShowReportModal(false);
+                    setReportData({ complaint: '', type: 'harassment' });
+                  }}
+                  className="w-full sm:w-auto px-4 py-2 text-gray-600 border rounded-md hover:bg-gray-50 transition-colors text-sm"
+                  disabled={isReporting}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleReportUser}
+                  disabled={!reportData.complaint.trim() || isReporting}
+                  className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
+                >
+                  {isReporting ? 'Submitting...' : 'Submit Report'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
