@@ -42,12 +42,12 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route element = {<ProtectedRoutes/>} >
           <Route path="/post" element={<Post />} />
-          <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/update-item/:itemId" element={<UpdateItem/>} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/availableBuyers/:itemId" element={<AvailableBuyers setBuyerId={setBuyerId} />} />
           <Route path="/chat/:sellerId/:productId" element={<Chat buyerId={buyerId} />} />
         </Route>
+        <Route path="/feedback" element={<FeedbackPage />} />
         <Route path="/item/:id" element={<Item/>} />
         <Route path="/category/:category" element={<CategoryProductsPage/>} />
         <Route path="/auth/success" element={<AuthSuccess />} />

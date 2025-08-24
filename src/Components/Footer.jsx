@@ -18,7 +18,7 @@ const Footer = () => {
           <div className="col-span-1 lg:col-span-1">
             <h3 className="text-2xl font-bold mb-4">ScholarShop</h3>
             <p className="text-orange-100 mb-4 leading-relaxed">
-              The ultimate C2C marketplace for MAIT students. Buy, sell, and connect with fellow students in a safe and trusted environment.
+              The ultimate P2P marketplace for MAIT students. Buy, sell, and connect with fellow students in a safe and trusted environment.
             </p>
           </div>
 
@@ -26,16 +26,19 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <a href="/" className="text-orange-100 hover:text-white transition-colors">Home</a>
+                <Link to="/" className="text-orange-100 hover:text-white transition-colors">Home</Link>
               </li>
               <li>
                 <a href="#products" className="text-orange-100 hover:text-white transition-colors">Browse Products</a>
               </li>
               <li>
-                <a href="/post" className="text-orange-100 hover:text-white transition-colors">Sell Your Item</a>
+                <Link to="/post" className="text-orange-100 hover:text-white transition-colors">Sell Your Item</Link>
               </li>
               <li>
-                <a href="/profile" className="text-orange-100 hover:text-white transition-colors">My Account</a>
+                <Link to="/profile" className="text-orange-100 hover:text-white transition-colors">My Account</Link>
+              </li>
+              <li>
+                <Link to="/feedback" className="text-orange-100 hover:text-white transition-colors">Feedback</Link>
               </li>
             </ul>
           </div>
