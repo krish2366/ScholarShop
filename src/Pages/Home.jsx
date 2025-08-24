@@ -217,7 +217,7 @@ const Home = () => {
                   >
                     <div className="relative overflow-hidden">
                       <img
-                        className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                        className="w-full h-48 object-contain group-hover:scale-110 transition-transform duration-300"
                         src={getFirstImageUrl(product.imageUrl)}
                         alt={product.title}
                         onError={(e) => {

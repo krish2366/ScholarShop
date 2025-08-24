@@ -217,7 +217,7 @@ function Item() {
             <img
               src={getCurrentImageUrl()}
               alt={product.title}
-              className="w-full h-96 object-cover rounded-lg"
+              className="w-full h-96 object-contain rounded-lg"
             />
 
             {product.imageUrl &&
