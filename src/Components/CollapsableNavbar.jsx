@@ -1,5 +1,5 @@
 import { useState } from "react";
-import logo from "../assets/logo1.svg";
+import logo from "../assets/logo1.png";
 import { Bars3Icon } from "@heroicons/react/24/solid";
 import { HomeIcon, LogOutIcon, PenLineIcon, User2, UsersRound } from "lucide-react"
 import { Link } from "react-router-dom";
@@ -33,13 +33,13 @@ function CollapsableNavbar() {
       )}
 
       <div
-        className={`fixed top-0 left-0 z-40 h-full w-[27rem] bg-white transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 z-40 h-full w-[15rem] md:w-[27rem] bg-white transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex gap-5 items-center text-white uppercase bg-gray-100 p-4">
-          <img src={logo} alt="scholar shop" className="h-16" />
-          <p className="text-3xl font-bold text-[#F47C26]">ScholarShop</p>
+          <img src={logo} alt="scholar shop" className="h-8 md:h-16" />
+          <p className="md:text-3xl font-bold text-[#F47C26]">ScholarShop</p>
         </div>
 
         <div className="py-4 px-5 overflow-y-auto font-medium space-y-2">
