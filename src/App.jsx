@@ -28,6 +28,7 @@ import MaintenancePage from './Pages/MaintenancePage.jsx';
 import AdminFeedback from './Pages/admin/AdminFeedback.jsx';  
 import ProtectedRoutes from './Components/ProtectedRoutes.jsx';
 import NotFoundPage from './Pages/NotFound.jsx';
+import AdminUserReports from './Pages/admin/AdminUserReports.jsx';
 
 function App() {
 
@@ -95,6 +96,7 @@ function App() {
           </AdminProtectedRoute>
         } />
         <Route path="/admin/feedback" element={<AdminFeedback />} />
+        <Route path="/admin/user-reports" element={<AdminUserReports />} />
         
         {/* Maintenance Page */}
         <Route path="/maintenance" element={<MaintenancePage />} />
